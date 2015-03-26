@@ -2,9 +2,10 @@
 Part of the source code for HR and Warehouse management system
 
 ### Important Files:
-Views under the "views" folder for front-end code.
-Services and Repository patterns under "services" and "repositories" folders.
-"CodeTemplates" folder for customizing generated controllers and views.
+
+* Views under the "views" folder for front-end code.
+* Services and Repository patterns under "services" and "repositories" folders.
+* "CodeTemplates" folder for customizing generated controllers and views.
 
 ###Skills/Tools Involved:
 

@@ -1,0 +1,67 @@
+﻿@model IEnumerable<CBMS.Models.Payroll.PayrollProfileModel>
+
+<p>
+    @if (ViewData.ContainsKey("deptId"))
+    {
+        @Html.ActionLink("Create New", "Create", "PayrollProfile", new { deptId = (int)ViewData["deptId"] }, null)
+    }
+    else
+    {
+        if (ViewData.ContainsKey("outletId"))
+        {
+            @Html.ActionLink("Create New", "Create", "PayrollProfile", new { outletId = (int)ViewData["outletId"] }, null)
+        }
+        else
+        {
+            @Html.ActionLink("Create New", "Create", "PayrollProfile")
+        }
+    }
+
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Brand)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Outlet)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SalaryLowerBound)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SalaryUpperBound)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ValidUntil)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Brand.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Outlet.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalaryLowerBound)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalaryUpperBound)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValidUntil)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", "PayrollProfile", new { id = item.Id }, null) |
+                @Html.ActionLink("Details", "Details", "PayrollProfile", new { id = item.Id }, null) |
+                @Html.ActionLink("Delete", "Delete", "PayrollProfile", new { id = item.Id }, null)
+            </td>
+        </tr>
+    }
+
+</table>

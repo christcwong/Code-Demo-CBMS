@@ -1,0 +1,32 @@
+﻿@using CBMS.Utilities;
+@{
+    ViewBag.Title = "Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Upload</h2>
+<div>
+    <p>Please Pick an exported MYOB Excel File.</p>
+    <p> Sample can be found over @Html.Link("here", "/Content/invctst2.xlsx")</p>
+</div>
+@using (Html.BeginForm("Upload", "Inventory", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <label class="btn btn-primary" for="file">
+        Browse File...
+    </label>
+    <input id="file" name="file" type="file" style="display:none;" onchange='$("#upload-file-info").html($(this).val());'>
+    <span class='label label-default' id="upload-file-info"></span>
+    <input type="submit" class="form-control" />
+
+}
+@Html.ActionLink("Back to Item List", "ListAllItem")
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            $('form').submit(function () {
+                $(this).children('input[type="submit"]').prop("disabled", true).val("Uploading, Please wait...");
+            });
+        });
+    </script>
+}

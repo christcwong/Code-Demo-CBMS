@@ -1,0 +1,47 @@
+﻿@model IEnumerable<CBMS.Models.Config.ConfigUnitModel>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ChinName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.unitType)
+        </th>
+        <th></th>
+    </tr>
+
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChinName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.unitType)
+                </td>
+                <td>
+                    @Ajax.ActionLink("Edit", "EditConfigUnit", new { configUnitId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "ShowEditConfigUnitModal", HttpMethod = "GET", UpdateTargetId = "divEditConfigUnit" }, new { @class = "btn btn-default" })
+                    @Ajax.ActionLink("Delete", "DeleteConfigUnit", new { configUnitId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "OnComplete", HttpMethod = "POST", Confirm = "Are you sure you want to deactivate this item?", UpdateTargetId = "UnitList" }, new { @class = "btn btn-default" })
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>No Data return.</td>
+            <td></td>
+            <td></td>
+        </tr>
+    }
+</table>
+

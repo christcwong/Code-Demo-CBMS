@@ -1,0 +1,33 @@
+﻿@model IEnumerable<CBMS.Models.Config.ConfigLeaveModel>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th></th>
+    </tr>
+
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Ajax.ActionLink("Edit", "EditConfigLeave", new { configLeaveId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "ShowEditConfigLeaveModal", HttpMethod = "GET", UpdateTargetId = "divEditConfigLeave" }, new { @class = "btn btn-default" })
+                    @Ajax.ActionLink("Delete", "DeleteConfigLeave", new { configLeaveId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "OnComplete", HttpMethod = "POST", Confirm = "Are you sure you want to deactivate this item?", UpdateTargetId = "leaveList" }, new { @class = "btn btn-default" })
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>No Data return.</td>
+        </tr>
+    }
+</table>
+

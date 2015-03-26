@@ -1,0 +1,104 @@
+﻿@model CBMS.Models.ViewModels.ItemViewModel
+
+@{
+    ViewBag.Title = "All Items";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>All Items</h2>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+                <span class="glyphicon glyphicon-collapse-down"></span>
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    Item Categories
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+                @using (Ajax.BeginForm("CreateItemCategory", new AjaxOptions { UpdateTargetId = "ItemCategoryList" }))
+                {
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only">Bank Name: </label>
+                            @Html.EditorFor(m => m.NewItemCategory.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Item Category Name in warehouse" } })
+                        </div>
+                        <input type="submit" value="Create" class="btn btn-default" />
+                    </div>
+                }
+                <br />
+
+                <div id="ItemCategoryList">
+                    @{Html.RenderPartial("_ListItemCategory", Model.ItemCategories);}
+                </div>
+                <div id="divEditItemCategory">
+                    @{Html.RenderPartial("_EditItemCategory", Model.NewItemCategory);}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTwo">
+            <h4 class="panel-title">
+                <span class="glyphicon glyphicon-collapse-down"></span>
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                    Items
+                </a>
+            </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
+            <div class="panel-body">
+                @*@using (Ajax.BeginForm("CreateItem", new AjaxOptions { UpdateTargetId = "itemList" }))
+                    {
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label class="sr-only">Leave Type: </label>
+                                @Html.EditorFor(m => m.NewItem.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Leave Name" } })
+                            </div>
+                            <input type="submit" value="Create" class="btn btn-default" />
+                        </div>
+                    }
+                    <br />
+                *@
+                <div id="itemList">
+                    @{Html.RenderPartial("_ListItem", Model.Items);}
+
+                </div>
+                <div id="divEditItem">
+                    @{Html.RenderPartial("_EditItem", Model.NewItem);}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryajax")
+
+    <script>
+        function OnBegin() {
+            $("body").attr("style", "cursor:progress");
+        }
+        function OnComplete() {
+            $("body").attr("style", "cursor:auto");
+        }
+        function ShowEditItemModal() {
+            $('#EditItemModal').modal('toggle');
+            $("body").attr("style", "cursor:auto");
+        }
+        function HideEditItemModal() {
+            $('#EditItemModal').modal('toggle');
+            $("body").attr("style", "cursor:auto");
+        }
+        function ShowEditItemCategoryModal() {
+            $('#EditItemCategoryModal').modal('toggle');
+            $("body").attr("style", "cursor:auto");
+        }
+        function HideEditItemCategoryModal() {
+            $('#EditItemCategoryModal').modal('toggle');
+            $("body").attr("style", "cursor:auto");
+        }
+    </script>
+}

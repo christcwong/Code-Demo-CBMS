@@ -1,0 +1,91 @@
+﻿@model IList<CBMS.Models.Roster.StaffInfoVisaModel>
+
+@{
+    ViewBag.Title = "StaffInfoVisa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit Visas for @(ViewBag.StaffName)</h2>
+
+
+@using (Html.BeginForm("EditVisas", "StaffProfile", new {StaffProfileId=ViewBag.StaffProfileId }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Visas</h4>
+        <hr />
+        @{
+    for (int i = 0; i < Model.Count(); i++)
+    {
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(modelitem => Model[i].Id)
+            @Html.HiddenFor(modelitem => Model[i].RowVersion)
+
+            <div class="form-group">
+                @Html.LabelFor(modelitem => Model[i].PassportNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(modelitem => Model[i].PassportNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(modelitem => Model[i].PassportNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(modelitem => Model[i].VisaTypeId, "VisaTypeId", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("[" + i + "].VisaTypeId", new SelectList((SelectList)ViewBag.VisaTypeIdList, "Value", "Text", Model[i].VisaTypeId), htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(modelitem => Model[i].VisaTypeId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(modelitem => Model[i].IssueDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(modelitem => Model[i].IssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(modelitem => Model[i].IssueDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(modelitem => Model[i].VisaExpiry, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(modelitem => Model[i].VisaExpiry, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(modelitem => Model[i].VisaExpiry, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(modelitem => Model[i].VevoApproved, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(modelitem => Model[i].VevoApproved)
+                        @Html.ValidationMessageFor(modelitem => Model[i].VevoApproved, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+    }
+        }
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @if (ViewBag.StaffProfileId != null)
+    {
+        @Html.ActionLink("Back to Staff Profile", "Details", new { Id = ViewBag.StaffProfileId })
+    }
+    else
+    {
+        @Html.ActionLink("Back to List", "Index")
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

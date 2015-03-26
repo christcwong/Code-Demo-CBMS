@@ -1,0 +1,117 @@
+﻿@model CBMS.Models.Roster.StaffInfoModel
+
+@{
+    int? staffProfileId = (int)ViewData["StaffProfileId"];
+    Boolean editable = true;
+    if (ViewData.Keys.Contains("Editable"))
+    {
+        editable = (bool)ViewData["Editable"];
+    }
+}
+<div class="clearfix">
+    <h4 class="pull-left">Personal Information</h4>
+    @if (editable)
+    {
+        <div class="pull-right">
+            @if (staffProfileId.HasValue)
+            {
+                @Html.ActionLink("Edit", "EditStaffInfo", new { staffInfoId = Model.Id, staffProfileId = staffProfileId.Value })
+            }
+            else
+            {
+                @Html.ActionLink("Edit", "EditStaffInfo", new { staffInfoId = Model.Id })
+            }
+        </div>
+    }
+    <div class="clearfix"></div>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateOfBirth)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateOfBirth)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TFN)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TFN)
+        </dd>
+
+        <dt>
+            @Html.DisplayName("Spoken Languages")
+        </dt>
+
+        <dd>
+            @Html.DisplayName(" English ")
+            @Html.DisplayFor(model => model.EnglishSpoken)
+            @Html.DisplayName(" Mandarin ")
+            @Html.DisplayFor(model => model.MandarinSpoken)
+            @Html.DisplayName(" Cantonese ")
+            @Html.DisplayFor(model => model.CantoneseSpoken)
+            @if (!String.IsNullOrEmpty(Model.OtherSpokenLanuage))
+            {
+                @Html.DisplayName(" Others: ")   @Html.DisplayFor(model => model.OtherSpokenLanuage)
+            }
+        </dd>
+
+    </dl>
+
+    @*<dl class="col-md-4">
+            <h5>Visa</h5>
+            <hr />
+            @{
+
+                for (int i = 0; i < Model.Visas.Count; i++)
+                {
+                    if (Model.Visas.Count > 1)
+                    {
+                        @Html.Raw("Visa " + (i + 1) + " <hr/>")
+                    }
+                    Html.RenderPartial("DisplayTemplates/StaffInfoVisaDetails", Model.Visas[i]);
+                }
+            }
+        </dl>*@
+
+    <dl class="col-md-4">
+        <h5>Contact</h5>
+        @*<h5 class="pull-left">Contact</h5>*@
+        @*<div class="pull-right">
+                @Html.ActionLink("Edit", "EditContact", new { contactId = Model.ContactId})
+            </div>*@
+        @*<div class="clearfix"></div>*@
+        <hr />
+        @{Html.RenderPartial("DisplayTemplates/StaffInfoContactDetails", Model.Contact);}
+    </dl>
+    <dl class="col-md-4">
+        <h5>Emegency Contact</h5>
+        @*<h5 class="pull-left">Emegency Contact</h5>
+            <div class="pull-right">
+                @Html.ActionLink("Edit", "EditContact", new { contactId = Model.EmergencyContactId })
+            </div>
+            <div class="clearfix"></div>*@
+        <hr />
+        @{Html.RenderPartial("DisplayTemplates/StaffInfoContactDetails", Model.EmergencyContact);}
+    </dl>
+</div>

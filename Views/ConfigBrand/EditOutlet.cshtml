@@ -1,0 +1,62 @@
+﻿@model CBMS.Models.ViewModels.ConfigBrandViewModel
+
+@{
+    ViewBag.Title = "EditOutlet";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    Edit Outlet
+    <span class="pull-right">
+        @*<small><a onclick="history.go(-1);return false;" href="#">Back</a></small>*@
+        <small>@Html.ActionLink("Back", "ListOutlet", new { brandId = Model.Outlets[0].BrandId })</small>
+    </span>
+</h2>
+
+<h4>@Model.Outlets[0].Name of @Model.Outlets[0].Brand.Name</h4>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Outlets[0].Location.Id);
+    @Html.HiddenFor(model => model.Outlets[0].Location.RowVersion);
+    @Html.HiddenFor(model => model.Outlets[0].LocationId);
+    @Html.HiddenFor(model => model.Outlets[0].BrandId);
+    @Html.HiddenFor(model => model.Outlets[0].Id);
+    @Html.HiddenFor(model => model.Outlets[0].RowVersion);
+    @*@Html.HiddenFor(model => model.Outlets[0].Brand.Name);*@
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">Outlet Name</label>
+            <div class="col-sm-10">
+                @Html.EditorFor(model => model.Outlets[0].Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Brand Name" } })
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">Address</label>
+            <div class="col-sm-10">
+                @Html.EditorFor(model => model.Outlets[0].Location.Address, new { htmlAttributes = new { @class = "form-control", @placeholder = "Address" } })
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">Postcode</label>
+            <div class="col-sm-10">
+                @Html.EditorFor(model => model.Outlets[0].Location.PostCode, new { htmlAttributes = new { @class = "form-control", @placeholder = "Postcode" } })
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">Suburb</label>
+            <div class="col-sm-10">
+                @Html.EditorFor(model => model.Outlets[0].Location.Suburb, new { htmlAttributes = new { @class = "form-control", @placeholder = "Suburb" } })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Save</button>
+            </div>
+        </div>
+    </div>
+}
+

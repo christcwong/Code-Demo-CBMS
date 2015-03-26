@@ -1,0 +1,56 @@
+﻿@model IEnumerable<FrameLog.Models.IChangeSet<CBMS.Models.ApplicationUser>>
+
+<h4>Logs</h4>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var changeset in Model)
+    {
+        <hr />
+        @Html.Raw("At " + changeset.Timestamp + ", <b>"
+        + (changeset.Author == null ? "Anonymous" : changeset.Author.UserName)
+        + "</b> made " + changeset.ObjectChanges.Count() + " changes:")
+        <ul>
+            @foreach (var objectChange in changeset.ObjectChanges)
+            {
+                <li>
+                    @if (objectChange.TypeName != "StaffInfoContactModel")
+                    {
+                        @Html.Raw(objectChange.TypeName)
+                    }
+                    else
+                    {
+                        if (objectChange.ObjectReference == ViewBag.StaffProfile.StaffInfo.ContactId.ToString())
+                        {
+                            @Html.Raw("Staff Info Contact")
+                        }
+                        else
+                        {
+                            @Html.Raw("Staff Info Emergency Contact")
+                        }
+                    }
+                </li>
+
+                <ul>
+                    @foreach (var propertyChange in objectChange.PropertyChanges)
+                    {
+                        if (
+                        (propertyChange.PropertyName==("Id"))
+                        || propertyChange.PropertyName == "ObjectCreateTime"
+                        || propertyChange.PropertyName == "ObjectUpdateTime"
+                        || propertyChange.PropertyName == "RowVersion")
+                        {
+                            continue;
+                        }
+                        <li>@Html.Raw("Changed " + propertyChange.PropertyName + " to value : " + propertyChange.Value)</li>
+                    }
+                </ul>
+            }
+        </ul>
+        //@Html.Raw(changeset.ToString());
+    }
+}
+else
+{
+    @Html.Raw("There is no history for this Staff.")
+}

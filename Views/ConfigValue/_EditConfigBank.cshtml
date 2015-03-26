@@ -1,0 +1,27 @@
+﻿@model CBMS.Models.Config.ConfigBankModel
+
+@if (Model != null)
+{
+    using (Ajax.BeginForm("EditConfigBank", new AjaxOptions { OnBegin = "OnBegin", OnComplete = "HideEditConfigBankModal", HttpMethod = "POST", UpdateTargetId = "bankList" }))
+    {
+        
+        <div class="modal fade" id="EditConfigBankModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Edit Bank</h4>
+                    </div>
+                    <div class="modal-body">
+                        @Html.HiddenFor(model => model.Id)
+                        @Html.EditorFor(model => model.BankName)
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" value="Submit" class="btn btn-primary" />
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    }
+}

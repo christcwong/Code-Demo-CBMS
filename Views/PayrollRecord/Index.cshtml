@@ -1,0 +1,203 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    //bool hasOutlet = true;
+    //if (Model == null)
+    //{
+    //    hasOutlet = false;
+    //}
+}
+
+<h2>Payroll</h2>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="col-md-12">
+            @Html.Label("Brand", htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-3">
+                @Html.DropDownList("BrandId", (SelectList)ViewBag.BrandIdList, "Select a Brand...", htmlAttributes: new { @class = "form-control" })
+            </div>
+
+            @Html.Label("Outlet", htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-3">
+                @Html.DropDownList("OutletId", (SelectList)ViewBag.OutletIdList, "Select a Outlet...", htmlAttributes: new
+                    {
+                        @class = "form-control",
+                        disabled = "disabled"
+                    })
+            </div>
+            @Html.Label("Department", htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-3">
+                @Html.DropDownList("DepartmentId", (SelectList)ViewBag.DepartmentIdList, "--Whole Outlet--", htmlAttributes: new
+                    {
+                        @class = "form-control",
+                        disabled = "disabled"
+                    })
+            </div>
+        </div>
+    </div>
+</div>
+<div id="loading-element" hidden>Loading...</div>
+<div id="result">
+
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryajax")
+    <script type="text/javascript">
+        var BrandId = $("#BrandId");
+        var OutletId = $("#OutletId");
+        var DepartmentId = $("#DepartmentId");
+        var ViewPortId = $("#result");
+        var LoadingElementId = $("#loading-element");
+
+        var LoadOutletOfBrand = function () {
+            OutletId.prop("disabled", true);
+            DepartmentId.prop("disabled", true);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetOutletsOfBrand", "Ajax")",
+                data: "brandId=" + BrandId.val(),
+                beforeSend: function () {
+                    $("body").attr("style", "cursor:progress");
+                },
+                complete: function () {
+                    $("body").attr("style", "cursor:auto");
+                },
+                success: function (dataJson) {
+                    OutletId.prop("disabled", false);
+                    //OutletId.prop("readonly", false);
+                    OutletId.html('');
+                    var itemsHtml = '<option>Select Outlet...</option>';
+                    $.each(dataJson, function (i, dataJsonItem) {
+                        itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.Name + '</option>';
+                    });
+                    OutletId.html(itemsHtml);
+                    OutletId.focus();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //viewport.html("Failed to load data. Please try again.");
+                    alert(errorThrown);
+                }
+            });
+
+        }
+
+        var LoadPayrollOfOutlet = function () {
+            $(OutletId.children("option")[0]).prop('disabled', true);
+            if (!OutletId.val()) {
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetPayrollRecords", "Ajax")",
+                data: "outletId=" + OutletId.val(),
+                beforeSend: function () {
+                    $("body").attr("style", "cursor:progress");
+                    LoadingElementId.show(400);
+                },
+                complete: function () {
+                    $("body").attr("style", "cursor:auto");
+                    LoadingElementId.hide(400);
+                },
+                success: function (dataPartial) {
+                    ViewPortId.html(dataPartial);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //viewport.html("Failed to load data. Please try again.");
+                    alert(errorThrown);
+                }
+            });
+            DepartmentId.prop("disabled", true);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetDepartmentsOfOutlet", "Ajax")",
+                data: "outletId=" + OutletId.val(),
+                beforeSend: function () {
+                    $("body").attr("style", "cursor:progress");
+                },
+                complete: function () {
+                    $("body").attr("style", "cursor:auto");
+                },
+                success: function (dataJson) {
+                    DepartmentId.prop("disabled", false);
+                    //DepartmentId.prop("readonly", false);
+                    DepartmentId.html('');
+                    var itemsHtml = '<option value="0">--Whole Outlet--</option>';
+                    $.each(dataJson, function (i, dataJsonItem) {
+                        itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.Name + '</option>';
+                    });
+                    DepartmentId.html(itemsHtml);
+                    DepartmentId.focus();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //viewport.html("Failed to load data. Please try again.");
+                    alert(errorThrown);
+                }
+            });
+        }
+
+        var LoadPayrollOfDepartment = function () {
+            //$(DepartmentId.children("option")[0]).prop('disabled', true);
+            if (!DepartmentId.val() || DepartmentId.val() == 0) {
+                LoadPayrollOfOutlet();
+                return;
+            };
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetPayrollRecords", "Ajax")",
+                data: "deptId=" + DepartmentId.val(),
+                beforeSend: function () {
+                    $("body").attr("style", "cursor:progress");
+                    LoadingElementId.show(400);
+                },
+                complete: function () {
+                    $("body").attr("style", "cursor:auto");
+                    LoadingElementId.hide(400);
+                },
+                success: function (dataPartial) {
+                    ViewPortId.html(dataPartial);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //viewport.html("Failed to load data. Please try again.");
+                    alert(errorThrown);
+                }
+            });
+        }
+
+        var ClearAllSearch = function () {
+            BrandId.val("");
+            OutletId.val("");
+            OutletId.prop('disable', true);
+            DepartmentId.val("");
+            DepartmentId.prop('disable', true);
+        }
+
+        $(function () {
+            $("#more-options-viewport").hide();
+            $("#more-options-btn").click(function () {
+                $("#more-options-viewport").toggle();
+            });
+            $('[data-toggle="tooltip"]').tooltip();
+            $("#application-form").on("submit", function () {
+                $('input,select').prop('disabled', false);
+            });
+            $(BrandId.children("option")[0]).prop('disabled', true);
+            BrandId.change(LoadOutletOfBrand);
+            OutletId.change(LoadPayrollOfOutlet);
+            DepartmentId.change(LoadPayrollOfDepartment);
+            //DepartmentId.change(LoadStaffProfileOfDepartment);
+
+            if (BrandId.val() && OutletId.val()) {
+                if (DepartmentId.val()) {
+                    OutletId.prop("disabled", false);
+                    DepartmentId.prop("disabled", false);
+                    LoadPayrollOfDepartment();
+                } else {
+                    OutletId.prop("disabled", false);
+                    LoadPayrollOfOutlet();
+                }
+            };
+        });
+    </script>
+}

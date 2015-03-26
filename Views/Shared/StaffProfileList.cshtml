@@ -1,0 +1,156 @@
+﻿@model IEnumerable<CBMS.Models.Roster.StaffProfileModel>
+
+@{
+    Boolean editable = true;
+    if (ViewData.Keys.Contains("Editable"))
+    {
+        editable = (bool)ViewData["Editable"];
+    }
+
+    Boolean showVisaExpiry = false;
+
+    if (ViewData.Keys.Contains("ShowVisaExpiry"))
+    {
+        showVisaExpiry = (bool)ViewData["ShowVisaExpiry"];
+    }
+    Boolean showBirthday = false;
+
+    if (ViewData.Keys.Contains("ShowBirthday"))
+    {
+        showBirthday = (bool)ViewData["ShowBirthday"];
+    }
+    Boolean showBrandOutletDepartment = true;
+    if (ViewData.Keys.Contains("ShowBrandOutletDepartment"))
+    {
+        showBrandOutletDepartment = (bool)ViewData["ShowBrandOutletDepartment"];
+    }
+}
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.StaffId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RosterName)
+        </th>
+        @if (showBrandOutletDepartment)
+        {
+            <th>
+                @Html.DisplayNameFor(model => model.Brand)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Department.Outlet)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Department)
+            </th>
+        }
+        <th>
+            @Html.DisplayNameFor(model => model.Position)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StaffInfo.FullName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StaffInfo.Visas.First().VisaType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        @if (showVisaExpiry)
+        {
+            <th>
+                Visa Expiry
+            </th>
+        }
+        @if (showBirthday)
+        {
+            <th>
+                Birthday
+            </th>
+        }
+        <th>Total: @(Model.Count())</th>
+    </tr>
+    @if (Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StaffId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RosterName)
+                </td>
+                @if (showBrandOutletDepartment)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Brand.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Department.Outlet.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Department.Name)
+                    </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.Position.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StaffInfo.FullName)
+                </td>
+                <td>
+                    @if (item.StaffInfo != null && item.StaffInfo.Visas != null && item.StaffInfo.Visas.Any())
+                    {
+                        @Html.DisplayFor(modelItem => item.StaffInfo.Visas.OrderBy(visa => visa.VisaExpiry).First().VisaType.Name)
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                @if (showVisaExpiry)
+                {
+                    <td>
+                        @if (item.StaffInfo.Visas.Any())
+                        {
+                            @Html.DisplayFor(modelItem => item.StaffInfo.Visas.OrderBy(visa => visa.VisaExpiry).First().VisaExpiry)
+                        }
+                    </td>
+                }
+                @if (showBirthday)
+                {
+                    <td>
+                        @if (item.StaffInfo.DateOfBirth.HasValue)
+                        {
+                            @*@Html.Raw(item.StaffInfo.DateOfBirth.Value.Day+"/"+item.StaffInfo.DateOfBirth.Value.Month)*@
+                            @Html.Raw(String.Format("{0:dd MMM}", item.StaffInfo.DateOfBirth.Value))
+                        }
+                    </td>
+                }
+                <td>
+                    @if (editable)
+                    {
+                        @*@Html.ActionLink("Edit", "Edit", new { id = item.Id }) |*@
+                        @Html.ActionLink("Details", "Details", "StaffProfile", new { id = item.Id }, new { @class = "btn btn-default" })
+                        if (item.Status == CBMS.Utilities.ObjectStatus.ACTIVE)
+                        {
+                            @Html.ActionLink("Deactivate", "Delete", "StaffProfile", new { id = item.Id }, new { @class = "btn btn-default" })
+                        }
+                        if (item.Status == CBMS.Utilities.ObjectStatus.DELETED)
+                        {
+                            @Html.ActionLink("Activate", "Activate", "StaffProfile", new { id = item.Id }, new { @class = "btn btn-default" })
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr><td colspan="30624700"> There is no data returned.</td></tr>
+    }
+
+</table>

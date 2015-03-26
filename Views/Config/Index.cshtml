@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Configure</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Brand</h2>
+        <p>Adding Brands, Outlets, and Locations...</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index", "ConfigBrand")">Manage &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Position</h2>
+        <p>Adding Position, Paycode range...</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index", "ConfigPosition")">Manage &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Setting</h2>
+        <p>Adding all Bank Name, Paycode value...</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index", "ConfigValue")">Manage &raquo;</a></p>
+    </div>
+</div>

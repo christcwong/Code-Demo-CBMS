@@ -1,0 +1,410 @@
+﻿@using CBMS.Models.Roster;
+@using CBMS.Utilities;
+
+@model CBMS.Models.ViewModels.PayrollRecordViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create Payroll Record for @(Model.PayrollRecord.Outlet.Name) @(Model.PayrollRecord.Department!=null?" - "+Model.PayrollRecord.Department.Name:"")</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(model => model.PayrollRecord.OutletId)
+        @Html.HiddenFor(model => model.PayrollRecord.DepartmentId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PayrollRecord.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PayrollRecord.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PayrollRecord.StartDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PayrollRecord.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PayrollRecord.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PayrollRecord.EndDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model=>model.PayrollRecord.AmountCalculated, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model=>model.PayrollRecord.AmountCalculated, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model=>model.PayrollRecord.AmountCalculated, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+        @*<div class="form-group">
+                @Html.LabelFor(model=>model.PayrollRecord.AmountPaid, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model=>model.PayrollRecord.AmountPaid, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model=>model.PayrollRecord.AmountPaid, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PayrollRecord.Note, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PayrollRecord.Note, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PayrollRecord.Note, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <table id="payroll-table" class="table table-bordered table-striped table-hover table-responsive">
+                <tbody>
+                    @for (var i = 0; i < Model.PayrollRecord.StaffPayrollRecords.Count; i++)
+                    {
+                        var staffPayrollRecord = Model.PayrollRecord.StaffPayrollRecords[i];
+                        <tr>
+                            <td>
+                                @(i + 1)
+                                @Html.HiddenFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].StaffProfileId)
+                                @Html.HiddenFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].BrandId)
+                                @Html.HiddenFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].OutletId)
+                                @Html.HiddenFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].DepartmentId)
+                                @Html.HiddenFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].Status)
+                                @Html.HiddenFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].RowVersion)
+
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => staffPayrollRecord.StaffProfile.RosterName)</td>
+                            <td></td>
+                            @{
+                        List<StaffProfileLeaveRecordModel> leaveRecord = new List<StaffProfileLeaveRecordModel>();
+                        bool hasStaffRecord = Model.staffLeaves.TryGetValue(staffPayrollRecord.StaffProfile, out leaveRecord);
+                        var currentDate = Model.PayrollRecord.StartDate.Value;
+                        while (currentDate < DateTimeWrapper.EndOfDate(Model.PayrollRecord.EndDate.Value))
+                        {
+                            /// Shift Section
+                            <td>
+                                @if (hasStaffRecord)
+                                {
+                                    var currentLeaveRecord = leaveRecord.Where(rec => rec.StartOfLeave <= currentDate && currentDate < rec.DateReturn);
+                                    if (currentLeaveRecord.Any())
+                                    {
+                                        @Html.Raw("On Leave");
+                                    }
+                                }
+                            </td>
+                            /// Total Hours
+                            <td></td>
+                            currentDate = currentDate.AddDays(1);
+                        }
+                            }
+                            @*/// Total Hours*@
+                            <td>
+                                @Html.HiddenFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].VoluntaryHolidayPay, new { htmlAttributes = new { @class = "form-control WorkingHours" } })
+                                @Html.DisplayFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].VoluntaryHolidayPay, new { htmlAttributes = new { @class = "form-control WorkingHours" } })
+                                @Html.ValidationMessageFor(modelItem => staffPayrollRecord.VoluntaryHolidayPay)
+                            </td>
+                            <td>
+                                @Html.EditorFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].TotalWorkingHours, new { htmlAttributes = new { @class = "form-control WorkingHours" } })
+                                @Html.ValidationMessageFor(modelItem => staffPayrollRecord.TotalWorkingHours)
+                            </td>
+                            @*/// Remarks*@
+                            <td>
+                                @Html.EditorFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].Note, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(modelItem => staffPayrollRecord.Note)
+                            </td>
+                            @*///Pay Code*@
+                            <td>
+                                @*@Html.EditorFor(modelItem => Model.StaffPayrollRecords[i].PayCodeId, new { htmlAttributes = new { @class = "form-control" } })*@
+                                @Html.DropDownListFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].PayCodeId, new SelectList(Model.PayrollRecord.StaffPayrollRecords[i].StaffProfile.Position.PayCodes, "id", "name", Model.PayrollRecord.StaffPayrollRecords[i].PayCodeId), new { @class = "form-control", style = "min-width:80px" })
+                                @Html.ValidationMessageFor(modelItem => staffPayrollRecord.PayCodeId)
+                            </td>
+                            @*/// Amount Paid*@
+                            <td>
+                                @Html.EditorFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].AmountCalculated, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", style = "min-width:60px" } })
+                                @Html.ValidationMessageFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].AmountCalculated)
+                            </td>
+                            <td>
+                                @Html.EditorFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].Adjustment, new { htmlAttributes = new { @class = "form-control", style = "min-width:60px" } })
+                                @Html.ValidationMessageFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].Adjustment)
+                            </td>
+                            <td>
+                                @Html.EditorFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].AmountAdjusted, new { htmlAttributes = new { @class = "form-control", style = "min-width:60px", disabled = "disabled" } })
+                                @Html.ValidationMessageFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].AmountAdjusted)
+                            </td>
+                            <td>
+                                @Html.EditorFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].AmountPaid, new { htmlAttributes = new { @class = "form-control", style = "min-width:60px" } })
+                                @Html.ValidationMessageFor(modelItem => Model.PayrollRecord.StaffPayrollRecords[i].AmountPaid)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>DAY/DATE</th>
+                        @{
+                    var currentDate2 = Model.PayrollRecord.StartDate.Value;
+                    while (currentDate2 < DateTimeWrapper.EndOfDate(Model.PayrollRecord.EndDate.Value))
+                    {
+                        /// Shift Section
+                        <th>
+                            @(currentDate2.ToString("ddd"))
+                        </th>
+                        /// Total Hours
+                        <th></th>
+                        currentDate2 = currentDate2.AddDays(1);
+                    }
+                        }
+                        <th>Voluntary Holiday Pay</th>
+                        @*/// Total Hours*@
+                        <th>Total Hours</th>
+                        @*/// Remarks*@
+                        <th>Remarks</th>
+                        @*///Pay Code*@
+                        <th>Pay Code</th>
+                        @*/// Amount Paid*@
+                        <th>Calculated</th>
+                        <th>Adjustment</th>
+                        <th>Adjusted</th>
+                        <th>Final Paid</th>
+                    </tr>
+
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">DAY</td>
+                        @{
+                    var currentDate3 = Model.PayrollRecord.StartDate.Value;
+                    while (currentDate3 < DateTimeWrapper.EndOfDate(Model.PayrollRecord.EndDate.Value))
+                    {
+
+                        <th colspan="2">
+                            @(currentDate3.DayOfWeek.ToString())
+                        </th>
+                        currentDate3 = currentDate3.AddDays(1);
+                    }
+                        }
+                        <td colspan="4">Total Amount (Calculated)</td>
+                        @*/// Total Amount*@
+                        <td colspan="4">
+                            @Html.EditorFor(model => model.PayrollRecord.AmountCalculated, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.PayrollRecord.AmountCalculated, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">DAILY MANHOUR</td>
+                        @{
+                    var currentDate4 = Model.PayrollRecord.StartDate.Value;
+                    while (currentDate4 < DateTimeWrapper.EndOfDate(Model.PayrollRecord.EndDate.Value))
+                    {
+                        ///// Daily Hours
+                        <td colspan="2"></td>
+                        currentDate4 = currentDate4.AddDays(1);
+                    }
+                        }
+                        <td colspan="4">Total Amount (Adjusted)</td>
+                        @*/// Total Amount*@
+                        <td colspan="4">
+                            @Html.EditorFor(model => model.PayrollRecord.AmountAdjusted, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.PayrollRecord.AmountAdjusted, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        @{
+                            int colspan = 3;
+                            var currentDate5 = Model.PayrollRecord.StartDate.Value;
+                            while (currentDate5 < DateTimeWrapper.EndOfDate(Model.PayrollRecord.EndDate.Value))
+                            {
+                                colspan += 2;
+                                currentDate5 = currentDate5.AddDays(1);
+                            }
+                        }
+                        <td colspan="@colspan"></td>
+
+                        <td colspan="4">Total Amount (Actual)</td>
+                        @*/// Total Amount*@
+                        <td colspan="4">
+                            @Html.EditorFor(model => model.PayrollRecord.AmountPaid, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.PayrollRecord.AmountPaid, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        @*@for (var i = 0; i < Model.StaffPayrollRecords.Count; i++)
+            {
+                @Html.EditorFor(modelItem => Model.StaffPayrollRecords[i], "_OutletStaffPayrollEditTableRow")
+            }*@
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index", "PayrollRecord", new { outletId = Model.PayrollRecord.OutletId, deptId = Model.PayrollRecord.DepartmentId }, null)
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        var GetAmountOfPaid = function (totalHour, payCodeId, amountCalResult,Adjustment,amountAdjustedResult, amountPaidResult, staffProfileId) {
+            var payCodeVal = 0.0;
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetPay", "Ajax")",
+                data: "payCodeId=" + payCodeId + "&hours=" + totalHour + "&staffProfileId=" + staffProfileId,
+                beforeSend: function () {
+                    $("body").attr("style", "cursor:progress");
+                },
+                complete: function () {
+                    $("body").attr("style", "cursor:auto");
+                },
+                success: function (datajson) {
+                    pay = datajson.Pay;
+                    amountCalResult.val(pay);
+                    var adjustedVal = +(+(pay) + +(Adjustment.val()));
+                    amountAdjustedResult.val(adjustedVal);
+                    if (!amountPaidResult.val() || amountPaidResult.val() == 0) {
+                        amountPaidResult.val(adjustedVal);
+                    }
+                    calculateTotalPaid();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //viewport.html("Failed to load data. Please try again.");
+                    alert(errorThrown);
+                }
+            });
+        };
+
+        var onPayCodeChange = function (PayCodeControl) {
+            var newVal = $(PayCodeControl).val();
+            if (!confirm("Are you sure you wish to update the paycode of this staff?")) {
+                $(PayCodeControl).val($(PayCodeControl).data('val'));
+                return;
+            }
+            // and update them first to
+            var staffProfileId = $(PayCodeControl).parents("tr").find('input[id$="StaffProfileId"]');
+            var PayCodeId = $(PayCodeControl);
+            var TotalHour = $(PayCodeControl).parents("tr").find('input[id$="TotalWorkingHours"]');
+            var AmountCal = $(PayCodeControl).parents("tr").find('input[id$="AmountCalculated"]');
+            var Adjustment = $(PayCodeControl).parents("tr").find('input[id$="Adjustment"]');
+            var AmountAdj = $(PayCodeControl).parents("tr").find('input[id$="AmountAdjusted"]');
+            var AmountPaid = $(PayCodeControl).parents("tr").find('input[id$="AmountPaid"]');
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("UpdateStaffProfilePayCode", "Ajax")",
+                data: "StaffProfileId=" + staffProfileId.val() + "&payCodeId=" + newVal,
+                beforeSend: function () {
+                    $("body").attr("style", "cursor:progress");
+                },
+                complete: function () {
+                    $("body").attr("style", "cursor:auto");
+                },
+                success: function (datajson) {
+                    $(PayCodeControl).data('val', newVal);
+                    GetAmountOfPaid(TotalHour.val(), PayCodeId.val(), AmountCal,Adjustment,AmountAdj, AmountPaid, staffProfileId.val());
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //viewport.html("Failed to load data. Please try again.");
+                    alert(errorThrown);
+                    $(PayCodeControl).val($(PayCodeControl).data('val'));
+                }
+            });
+
+        };
+
+        var calculateTotalPaid = function () {
+            var calSum = 0.0;
+            var adjSum = 0.0;
+            var paidSum = 0.0;
+            $('#payroll-table tbody input[id$="AmountCalculated"]').each(function () { calSum += Number($(this).val()); });
+            $('#payroll-table tbody input[id$="AmountAdjusted"]').each(function () { adjSum += Number($(this).val()); });
+            $('#payroll-table tbody input[id$="AmountPaid"]').each(function () { paidSum += Number($(this).val()); });
+            $('#payroll-table tfoot input[id$="AmountCalculated"]').val(calSum);
+            $('#payroll-table tfoot input[id$="AmountAdjusted"]').val(adjSum);
+            $('#payroll-table tfoot input[id$="AmountPaid"]').val(paidSum);
+
+            // visual effects
+            $('#payroll-table tbody tr').each(function () {
+                var calVal = $(this).find('input[id$="AmountCalculated"]').val();
+                var adjVal = $(this).find('input[id$="AmountAdjusted"]').val();
+                var paidVal = $(this).find('input[id$="AmountPaid"]').val();
+                if (adjVal == paidVal) {
+                    $(this).removeClass('has-error');
+                } else {
+                    $(this).addClass('has-error');
+                }
+            });
+            if (adjSum == paidSum) {
+                $('#payroll-table tfoot input[id$="AmountPaid"]').parent('td').removeClass('has-error');
+            } else {
+                $('#payroll-table tfoot input[id$="AmountPaid"]').parent('td').addClass('has-error');
+            }
+        };
+
+        $(function () {
+            $("#payroll-table").on("change", 'input[id$="TotalWorkingHours"]', function () {
+                var staffProfileId = $(this).parents("tr").find('input[id$="StaffProfileId"]');
+                var TotalHour = $(this);
+                var PayCodeId = $(this).parents("tr").find('select[id$="PayCodeId"]');
+                var AmountCal = $(this).parents("tr").find('input[id$="AmountCalculated"]');
+                var Adjustment = $(this).parents("tr").find('input[id$="Adjustment"]');
+                var AmountAdj = $(this).parents("tr").find('input[id$="AmountAdjusted"]');
+                var AmountPaid = $(this).parents("tr").find('input[id$="AmountPaid"]');
+                var result = GetAmountOfPaid(TotalHour.val(), PayCodeId.val(), AmountCal, Adjustment, AmountAdj, AmountPaid, staffProfileId.val());
+            });
+
+            $('select[id$="PayCodeId"]').each(function () {
+                $(this).data('val', $(this).val());
+            });
+            $("#payroll-table").on("change", 'select[id$="PayCodeId"]', function () {
+                onPayCodeChange(this);
+            });
+            $("#payroll-table").on("change", 'tbody input[id$="AmountCalculated"]', function () {
+                calculateTotalPaid();
+            });
+
+            $("#payroll-table").on("change", 'tbody input[id$="Adjustment"]', function () {
+                var staffProfileId = $(this).parents("tr").find('input[id$="StaffProfileId"]');
+                var TotalHour = $(this).parents("tr").find('input[id$="TotalWorkingHours"]');
+                var PayCodeId = $(this).parents("tr").find('select[id$="PayCodeId"]');
+                var AmountCal = $(this).parents("tr").find('input[id$="AmountCalculated"]');
+                var Adjustment = $(this);
+                var AmountAdj = $(this).parents("tr").find('input[id$="AmountAdjusted"]');
+                var AmountPaid = $(this).parents("tr").find('input[id$="AmountPaid"]');
+                var result = GetAmountOfPaid(TotalHour.val(), PayCodeId.val(), AmountCal, Adjustment, AmountAdj, AmountPaid, staffProfileId.val());
+            });
+            $("#payroll-table").on("change", 'tbody input[id$="AmountPaid"]', function () {
+                calculateTotalPaid();
+            });
+
+            $("form").on("submit", function () {
+                $('input,select').prop('disabled', false);
+            });
+
+            //initialize : call onPayCodeChange for all staff
+            $('#payroll-table input[id$="TotalWorkingHours"]').each(function () {
+                var staffProfileId = $(this).parents("tr").find('input[id$="StaffProfileId"]');
+                var TotalHour = $(this);
+                var PayCodeId = $(this).parents("tr").find('select[id$="PayCodeId"]');
+                var AmountCal = $(this).parents("tr").find('input[id$="AmountCalculated"]');
+                var Adjustment = $(this).parents("tr").find('input[id$="Adjustment"]');
+                var AmountAdj = $(this).parents("tr").find('input[id$="AmountAdjusted"]');
+                var AmountPaid = $(this).parents("tr").find('input[id$="AmountPaid"]');
+                var result = GetAmountOfPaid(TotalHour.val(), PayCodeId.val(), AmountCal,Adjustment,AmountAdj, AmountPaid, staffProfileId.val());
+            });
+        });
+    </script>
+}

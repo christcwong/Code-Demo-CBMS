@@ -1,0 +1,90 @@
+﻿@model IDictionary<CBMS.Models.Payroll.PayrollRecordModel, bool>
+
+<div class=" col-md-8 pull-left">
+    @if (ViewData.ContainsKey("deptId"))
+    {
+        @Html.ActionLink("Create New", "Create", "PayrollRecord", new { deptId = (int)ViewData["deptId"] }, new { @class="btn btn-primary" })
+    }
+    else
+    {
+        if (ViewData.ContainsKey("outletId"))
+        {
+            @Html.ActionLink("Create New", "Create", "PayrollRecord", new { outletId = (int)ViewData["outletId"] }, new { @class = "btn btn-primary" })
+        }
+        else
+        {
+            @Html.ActionLink("Create New", "Create", "PayrollRecord", new { @class = "btn btn-primary" })
+        }
+    }
+</div>
+<div class="col-md-4 pull-right">
+    <table class=" table table-bordered">
+        <caption><b>Legend</b></caption>
+        <tr>
+            <td class="warning"></td>
+            <td>
+                Over-budget / Under-budget
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="clearfix"></div>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => new CBMS.Models.Payroll.PayrollRecordModel().Outlet.Brand)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => new CBMS.Models.Payroll.PayrollRecordModel().Outlet)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => new CBMS.Models.Payroll.PayrollRecordModel().StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => new CBMS.Models.Payroll.PayrollRecordModel().EndDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => new CBMS.Models.Payroll.PayrollRecordModel().AmountCalculated)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => new CBMS.Models.Payroll.PayrollRecordModel().AmountPaid)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => new CBMS.Models.Payroll.PayrollRecordModel().Note)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var keyValuePair in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => keyValuePair.Key.Outlet.Brand.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => keyValuePair.Key.Outlet.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => keyValuePair.Key.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => keyValuePair.Key.EndDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => keyValuePair.Key.AmountCalculated)
+            </td>
+            <td @if (keyValuePair.Value) { @Html.Raw("class=\"warning\"")  }>
+                @Html.DisplayFor(modelItem => keyValuePair.Key.AmountPaid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => keyValuePair.Key.Note)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", "PayrollRecord", new { id = keyValuePair.Key.Id }, null) |
+                @Html.ActionLink("Details", "Details", "PayrollRecord", new { id = keyValuePair.Key.Id }, null) |
+                @Html.ActionLink("Delete", "Delete", "PayrollRecord", new { id = keyValuePair.Key.Id }, null)
+            </td>
+        </tr>
+    }
+
+</table>

@@ -1,0 +1,167 @@
+﻿@model  CBMS.Models.Roster.StaffInfoModel
+
+@*@model  CBMS.Models.ViewModels.StaffInfoEditViewModel*@
+
+@{
+    ViewBag.Title = "StaffInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>StaffInfo</h2>
+
+
+@using (Html.BeginForm("EditStaffInfo", "StaffProfile", new {staffProfileId=ViewBag.StaffProfileId }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Personal Information</h4>
+        <hr />
+        @Html.ValidationSummary(true, "One or more field(s) is/are not correct", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.RowVersion)
+        @*@Html.HiddenFor(model => model.JobHistories)*@
+        @*@Html.HiddenFor(model => model.Visas)*@
+        @*@if (Model.Visas != null && Model.Visas.Any())
+            {
+                for (int i = 0; i < Model.Visas.Count; i++)
+                {
+                    @Html.HiddenFor(model => model.Visas[i].Id)
+                }
+            }
+            @if (Model.JobHistories != null && Model.JobHistories.Any())
+            {
+                for (int i = 0; i < Model.JobHistories.Count; i++)
+                {
+                    @Html.HiddenFor(model => model.JobHistories[i].Id)
+                }
+            }*@
+        @*@Html.HiddenFor(model => model.ContactId)
+        @Html.HiddenFor(model => model.EmergencyContactId)*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DateOfBirth, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TFN, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.TFN, new { htmlAttributes = new { @class = "form-control" } })
+                @*@Html.ValidationMessageFor(model => model.TFN, "TFN is not correct", new { @class = "text-danger" })*@
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Spoken Language", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayName(" English ")
+                @Html.EditorFor(model => model.EnglishSpoken)
+                @Html.DisplayName(" Mandarin ")
+                @Html.EditorFor(model => model.MandarinSpoken)
+                @Html.DisplayName(" Cantonese ")
+                @Html.EditorFor(model => model.CantoneseSpoken)
+                @Html.ValidationMessageFor(model => model.EnglishSpoken, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model.MandarinSpoken, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model.CantoneseSpoken, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.EnglishSpoken, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.EnglishSpoken)
+                        @Html.ValidationMessageFor(model => model.EnglishSpoken, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MandarinSpoken, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.MandarinSpoken)
+                        @Html.ValidationMessageFor(model => model.MandarinSpoken, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CantoneseSpoken, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.CantoneseSpoken)
+                        @Html.ValidationMessageFor(model => model.CantoneseSpoken, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.OtherSpokenLanuage, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.OtherSpokenLanuage, new { htmlAttributes = new { @class = "form-control" } })
+                @*@Html.ValidationMessageFor(model => model.OtherSpokenLanuage,"Other Spoken Language is not correct" , new { @class = "text-danger" })*@
+            </div>
+        </div>
+
+
+        <div class="col-md-12">
+                <div class="col-md-6">
+                    <h4>Contact</h4>
+                    <hr />
+                    @*@Html.HiddenFor(model => model.ContactId)*@
+                    @Html.EditorFor(model => model.Contact, "StaffInfoContactEdit")
+                </div>
+
+                <div class="col-md-6">
+                    <h4>Emergency Contact</h4>
+                    <hr />
+                    @*@Html.HiddenFor(model => model.EmergencyContactId)*@
+
+                    @Html.EditorFor(model => model.EmergencyContact, "StaffInfoContactEdit")
+                </div>
+            </div>
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @if (ViewBag.StaffProfileId != null)
+    {
+        @Html.ActionLink("Back to Staff Profile", "Details", new { Id = ViewBag.StaffProfileId })
+    }
+    else
+    {
+        @Html.ActionLink("Back to List", "Index")
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

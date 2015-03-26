@@ -1,0 +1,33 @@
+﻿@model IEnumerable<CBMS.Models.Config.ConfigPositionTypeModel>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PositionType)
+        </th>
+        <th></th>
+    </tr>
+
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PositionType)
+                </td>
+                <td>
+                    @Ajax.ActionLink("Edit", "EditConfigPositionType", new { configPositionTypeId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "ShowEditConfigPositionTypeModal", HttpMethod = "GET", UpdateTargetId = "divEditConfigPositionType" }, new { @class = "btn btn-default" })
+                    @Ajax.ActionLink("Delete", "DeleteConfigPositionType", new { configPositionTypeId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "OnComplete", HttpMethod = "POST", Confirm = "Are you sure you want to deactivate this item?", UpdateTargetId = "PositionTypeList" }, new { @class = "btn btn-default" })
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>No Data return.</td>
+        </tr>
+    }
+</table>
+

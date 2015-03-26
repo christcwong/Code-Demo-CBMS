@@ -1,0 +1,60 @@
+﻿@model CBMS.Models.Roster.StaffInfoVisaModel
+
+<div>
+    @*<h4>StaffInfoVisaModel</h4>
+    <hr />*@
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.VisaType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VisaType.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PassportNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PassportNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IssueDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IssueDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VisaExpiry)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VisaExpiry)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VevoApproved)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VevoApproved)
+        </dd>
+
+        @*<dt>
+            @Html.DisplayNameFor(model => model.RenewStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RenewStatus)
+        </dd>*@
+
+    </dl>
+</div>
+@*<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>*@

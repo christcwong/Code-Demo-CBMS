@@ -1,0 +1,65 @@
+﻿@model CBMS.Models.Payroll.PayrollProfileModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to deactivate this?</h3>
+<div>
+    <h4>PayrollProfileModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Brand)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Brand.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Outlet)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Outlet.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SalaryLowerBound)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SalaryLowerBound)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SalaryUpperBound)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SalaryUpperBound)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValidUntil)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValidUntil)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index", "PayrollRecord", new { outletId = Model.OutletId, deptId = Model.DepartmentId }, null)
+        </div>
+    }
+</div>

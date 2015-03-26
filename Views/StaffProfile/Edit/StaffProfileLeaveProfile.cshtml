@@ -1,0 +1,68 @@
+﻿@model CBMS.Models.Roster.StaffProfileLeaveProfileModel
+
+
+@using (Html.BeginForm("EditLeaveProfile", "StaffProfile", new { StaffProfileId = ViewBag.StaffProfileId }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Edit Leave Profile</h4>
+        <hr />
+        @Html.ValidationSummary(true, "One or more field(s) is/are not correct", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.RowVersion)
+        @*@Html.HiddenFor(model => model.AccumulatedLeaveCount)
+            @Html.HiddenFor(model => model.AccumulatedLeaveCountLastUpdate)*@
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EligibleLeaveCount, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="input-group col-md-3">
+                @Html.EditorFor(model => model.EligibleLeaveCount, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. 20", data_toggle = "tooltip", data_placement = "bottom", title = "Staff are divided into four categories. Most of them are eligible to have 20 days of leave, while those who work 60 hours per week are elibigible to have 24 days." } })
+                <span class="input-group-addon">Days</span>
+            </div>
+            @Html.ValidationMessageFor(model => model.EligibleLeaveCount, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.WorkingHoursPerWeek, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="input-group col-md-3">
+                @Html.EditorFor(model => model.WorkingHoursPerWeek, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. 40", data_toggle = "tooltip", data_placement = "bottom", title = "Office staff usually work 40 hours per week. Most front staff works 50 hours per week. Some work 60 hours per week." } })
+                <span class="input-group-addon">Hours</span>
+            </div>
+            @Html.ValidationMessageFor(model => model.WorkingHoursPerWeek, "", new { @class = "text-danger" })
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.LeaveCountAdjustment, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="input-group col-md-3">
+                @Html.EditorFor(model => model.LeaveCountAdjustment, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. 0", data_toggle = "tooltip", data_placement = "bottom", title = "Use this column to compensate leave count before system is rolled out, or manual adjustment on the final leave count" } })
+                <span class="input-group-addon">Hours</span>
+            </div>
+            @Html.ValidationMessageFor(model => model.LeaveCountAdjustment, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+
+    </div>
+}
+
+<div>
+    @if (ViewBag.StaffProfileId != null)
+    {
+        @Html.ActionLink("Back to Staff Profile", "Details", new { Id = ViewBag.StaffProfileId })
+    }
+    else
+    {
+        @Html.ActionLink("Back to List", "Index")
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

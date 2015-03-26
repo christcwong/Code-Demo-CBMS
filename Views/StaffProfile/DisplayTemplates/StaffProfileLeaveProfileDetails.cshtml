@@ -1,0 +1,76 @@
+﻿@model CBMS.Models.Roster.StaffProfileLeaveProfileModel
+@{
+    Boolean editable = true;
+    if (ViewData.Keys.Contains("Editable"))
+    {
+        editable = (bool)ViewData["Editable"];
+    }
+}
+<div>
+    <h4 class="pull-left">Leave Profile</h4>
+    @if (editable)
+    {
+        <div class="pull-right">
+            @Html.ActionLink("Edit", "EditLeaveProfile", new { leaveProfileId = Model.Id, StaffProfileId = ViewData["StaffProfileId"] })
+        </div>
+    }
+    <div class="clearfix"></div>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EligibleLeaveCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EligibleLeaveCount)
+            <span>Days</span>
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.WorkingHoursPerWeek)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.WorkingHoursPerWeek)
+            <span>Hours</span>
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CalculatedLeaveCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CalculatedLeaveCount)
+            <span>Days</span>
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LeaveCountAdjustment)
+            <span>Days</span>
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LeaveCountAdjustment)
+            <span>Days</span>
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AccumulatedLeaveCount)
+            <span>Days</span>
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AccumulatedLeaveCount)
+            <span>Days</span>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.AccumulatedLeaveCountLastUpdate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AccumulatedLeaveCountLastUpdate)
+        </dd>
+    </dl>
+</div>
+
+@{Html.RenderPartial("DisplayTemplates/StaffProfileLeaveRecordDetails", Model.LeaveRecords, this.ViewData);}

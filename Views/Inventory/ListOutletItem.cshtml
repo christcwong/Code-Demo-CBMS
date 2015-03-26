@@ -1,0 +1,258 @@
+﻿@model CBMS.Models.ViewModels.InventoryViewModel
+
+@{
+    ViewBag.Title = "List Outlet Items";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    bool openItemCategory = true;
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (ViewBag.BrandIdList != null)
+{
+    using (Html.BeginForm("ListOutletItem", "Inventory", FormMethod.Get, new { @class = "form-inline" }))
+    {
+        <div class="row">
+            @Html.Label("Brand", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("BrandId", (SelectList)ViewBag.BrandIdList, "Select a Brand...", htmlAttributes: new { @class = "form-control" })
+            </div>
+            @Html.Label("Outlet", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("OutletId", (SelectList)ViewBag.OutletIdList, "Select a Outlet...", htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <input type="submit" value="Show Outlet Items" class="btn btn-default" />
+    }
+}
+else
+{
+    <div>
+        No Brand.
+    </div>
+}
+<div class="col-md-6">
+    <h4>Create Category Items of selected outlet</h4>
+    @using (Html.BeginForm("CreateOutletCategory", "Inventory", FormMethod.Post, new { @class = "form-inline" }))
+    {
+        <div class="form-group">
+            <label class="sr-only">Category Name: </label>
+            @Html.EditorFor(model => model.NewOutletItemCategory.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Category Name" } })
+            <br />
+            @Html.ValidationMessageFor(model => model.NewOutletItemCategory.Name, "", new { @class = "text-danger" })
+        </div>
+
+
+        @Html.HiddenFor(model => model.Brand.Id);
+        @Html.HiddenFor(model => model.Outlet.Id);
+        <input type="submit" value="Create" class="btn btn-default" />
+    }
+</div>
+
+<div class="col-md-6">
+    <h4>Copy Categories from other outlets</h4>
+    @using (Html.BeginForm("CopyOutletCategory", "Inventory",
+            FormMethod.Post,
+            new { @class = "form-inline" }))
+    {
+        @Html.HiddenFor(model => model.Outlet.Id)
+        <div class="form-group">
+            <label class="sr-only">Outlet to copy: </label>
+            @{
+        //var copyFromOutletList = new SelectList((SelectList)ViewBag.OutletIdList, "Value", "Text");
+            }
+            @Html.DropDownList("sourceOutletId", (SelectList)ViewBag.CopyOutletIdList, "Select an Outlet...", new { @class = "form-control" })
+            @*@Html.DropDownList("sourceOutletId", copyFromOutletList, "Select an Outlet...", new { @class = "form-control" })*@
+        </div>
+        <input type="submit" value="Copy" class="btn btn-default" @(Model.Outlet != null ? "" : "disabled=\"disabled\"") />
+    }
+</div>
+
+<div class="clearfix"></div>
+<br />
+<div class="col-md-12">
+
+    @if (Model.OutletCategoryList != null)
+    {
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            @foreach (var item in Model.OutletCategoryList)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="heading-@(item.Id)">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse-@(item.Id)" aria-expanded="true" aria-controls="collapse-@(item.Id)">
+                                <span class="glyphicon glyphicon-collapse-down"></span>
+                                @(item.Name)
+                            </a>
+                            <span class="pull-right">
+                                <a href="@Url.Action("DeleteOutletItemCategory", new { outletItemCategoryId = item.Id })" data-confirm-message="Are you sure you want to delete category  @Html.Encode("\""+item.Name+"\"")  ?"><span class="glyphicon glyphicon-remove"></span></a>
+                            </span>
+                            <div class="clearfix"></div>
+                        </h4>
+                    </div>
+
+                    <div id="collapse-@(item.Id)" class="panel-collapse collapse @((openItemCategory && !(openItemCategory = false)) ? "in" : "")" role="tabpanel" aria-labelledby="heading-@(item.Id)">
+                        <div class="panel-body">
+                            @using (Ajax.BeginForm("InsertOutletItem", new AjaxOptions
+                    {
+                        InsertionMode = InsertionMode.Replace,
+                        HttpMethod = "POST",
+                        LoadingElementDuration = 1000,
+                        LoadingElementId = "loading-element-" + (item.Id),
+                        UpdateTargetId = "itemList-" + (item.Id),
+                    }))
+                            {
+                                <div class="form-inline">
+                                    <div class="form-group">
+                                        <label class="sr-only">Item Serial: </label>
+                                        @{
+                                var itemIndex = Model.OutletCategoryList.IndexOf(item);
+                                        }
+                                        @* below hidden input is used to allow arbitrary Index submission*@
+                                        @Html.Hidden("OutletCategoryList.Index", itemIndex)
+                                        @Html.HiddenFor(model => model.OutletCategoryList[itemIndex].Id)
+                                        @Html.EditorFor(model => model.NewItem.Serial, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Item Serial...", @data_provide = "typeahead", @autocomplete = "off" } })
+                                        <br />
+                                        @Html.ValidationMessageFor(model => model.NewItem.Serial, "", new { @class = "text-danger" })
+                                    </div>
+                                    <input type="submit" value="Insert" class="btn btn-default" />
+                                </div>
+                            }
+                            <br />
+                            <div id="loading-element-@(item.Id)" hidden>loading...</div>
+                            <div id="itemList-@(item.Id)">
+                                @*@{Html.RenderPartial("_ListConfigBank", Model.ConfigBanks);}*@
+                                @{Html.RenderPartial("_itemTable", item.Items, new ViewDataDictionary() { { "outletItemCategoryId", item.Id } });}
+                            </div>
+                            <div id="divEdit-@(item.Id)">
+                                @*@{Html.RenderPartial("_EditConfigBank", Model.NewConfigBank);}*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+
+
+@section styles{
+    @Styles.Render("~/Content/jqueryui-autocomplete")
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryajax")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        var BrandId = $("#BrandId");
+        var OutletId = $("#OutletId");
+
+        var LoadOutletOfBrand = function () {
+            if (BrandId[0].selectedIndex != 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetOutletsOfBrand", "Ajax")",
+                    data: "brandId=" + BrandId.val(),
+                    beforeSend: function () {
+                        $("body").attr("style", "cursor:progress");
+                    },
+                    complete: function () {
+                        $("body").attr("style", "cursor:auto");
+                    },
+                    success: function (dataJson) {
+                        OutletId.prop("disabled", false);
+                        //OutletId.prop("readonly", false);
+                        OutletId.html('');
+                        var itemsHtml = '<option>Select Outlet...</option>';
+                        $.each(dataJson, function (i, dataJsonItem) {
+                            itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.Name + '</option>';
+                        });
+                        OutletId.html(itemsHtml);
+                        OutletId.focus();
+                        var selectedOutletId = getParameterByName('OutletId');
+                        if (selectedOutletId) {
+                            OutletId.val(selectedOutletId);
+                            //LoadDepartmentOfOutlet();
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //viewport.html("Failed to load data. Please try again.");
+                        alert(errorThrown);
+                    }
+                });
+            }
+        }
+
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        $(function () {
+            $("#application-form").on("submit", function () {
+                $('input,select').prop('disabled', false);
+            });
+            BrandId.change(LoadOutletOfBrand);
+
+            if (BrandId.val() && !OutletId.val()) {
+                LoadOutletOfBrand();
+            };
+
+            $('a[data-confirm-message]').confirmModal();
+
+            // $().each is used because we are getting only one instance
+            // with the use of .autocomplete("instance"),
+            // which is used for modifying _renderItem Extension
+            $('input[data-provide="typeahead"]').each(function () {
+                $(this).autocomplete({
+                    source: "@Url.Action("GetItems","Ajax")",
+                    select: function (event, ui) {
+                        var $input = $(this);
+                        $input.val(ui.item.Serial);
+                        return false;
+                    },
+                    focus: function (event, ui) {
+                        $(this).val(ui.item.Serial);
+                        return false;
+                    },
+                    messages: {
+                        noResults: '',
+                        results: function () { }
+                    },
+                }).autocomplete("instance")._renderItem = function (ul, item) {
+                    return $("<li>")
+                      .append("<a>" + item.Serial + " - " + item.MYOBLabel + " - " + item.Unit + "</a>")
+                      .appendTo(ul);
+                };
+            });
+        });
+    </script>
+
+
+    <script type="text/javascript">
+        function OnBegin() {
+            $("body").attr("style", "cursor:progress");
+        }
+        function OnComplete() {
+            $("body").attr("style", "cursor:auto");
+        }
+        function OnCopyComplete() {
+            $("body").attr("style", "cursor:auto");
+            alert("Copy Done.");
+        }
+    </script>
+}
+
+
+
+
+
+
+
+
+

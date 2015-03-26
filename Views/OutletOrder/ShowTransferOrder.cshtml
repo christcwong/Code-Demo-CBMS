@@ -1,0 +1,188 @@
+﻿@model CBMS.Models.ViewModels.TransferOrderViewModel
+
+@{
+    ViewBag.Title = "ShowTransferOrder";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model != null)
+{
+
+    <h2>@Model.Outlet.Name ORDER FORM</h2>
+
+    using (Html.BeginForm("SubmitTransferOrder", "OutletOrder", FormMethod.Post))
+    {
+        if (Model.OutletId != 0)
+        {
+            @Html.HiddenFor(model => model.OutletId)
+        }
+
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+            @*
+                //of course you can do it this way.
+                // but when we are posting back from view to controller,
+                // the model binding will be messed up.
+                // so stick to the Item Count method.
+
+                    @foreach (var keyValuePair in Model.detailsForCategory)
+                {
+                    var itemCategory = keyValuePair.Key;
+                    var details = keyValuePair.Value;
+
+                ...
+                }
+            *@
+
+            @{ var itemCount = 0; }
+
+            @foreach (var itemCategory in Model.OutletItemCategories)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="heading-@(itemCategory.Id)">
+                        <h4 class="panel-title">
+                            <a class="btn-block btn-lg" data-toggle="collapse" data-parent="#accordion" href="#collapse-@(itemCategory.Id)" aria-expanded="true" aria-controls="collapse-@(itemCategory.Id)">
+                                <span class="glyphicon glyphicon-collapse-down"></span>
+                                @itemCategory.Name
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse-@(itemCategory.Id)" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-@(itemCategory.Id)">
+                        <div class="panel-body">
+                            <table class="table table-bordered" width="100%">
+                                <tr>
+                                    <th>
+
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => itemCategory.Items[0].PackageUnit)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => itemCategory.Items[0].Serial)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => itemCategory.Items[0].Name)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => itemCategory.Items[0].ChinName)
+                                    </th>
+                                </tr>
+                                @*@foreach (var item in itemCategory.Items)*@
+                                @*@foreach (var item in Model.TransferOrder.Details)*@
+                                @for (var i = 0; i < itemCategory.Items.Count(); i++)
+                                {
+                                    var item = Model.TransferOrder.Details[itemCount];
+
+                                    <tr>
+                                        <td>
+                                            <div class="form-inline">
+                                                <div class="form-group">
+                                                    <div class="col-md-3 text-right" style="padding-right: 0px;">
+                                                        <a class="btn btn-default btn-lg lead plus-btn-10" for_id="@itemCount">
+                                                            <span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span><span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                                        </a>
+                                                        <a class="btn btn-primary btn-lg lead plus-btn" for_id="@itemCount">
+                                                            <span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        @*<input type="text" class="form-control input-lg text-center" id="quantity-@item.Id" value="0" />*@
+
+                                                        @*@{var detail = Model.TransferOrder.Details.Find(rfd => rfd.ItemId == item.Id);}
+                                                            @Html.TextBoxFor(m => detail.QuantityChange, new { id = "quantity-" + detail.ItemId, Class = "form-control input-lg text-center", Placeholder = "e.g. 1" })*@
+
+                                                        @Html.HiddenFor(modelItem => Model.TransferOrder.Details[itemCount].ItemId)
+                                                        @Html.TextBoxFor(modelItem => Model.TransferOrder.Details[itemCount].QuantityRequested, new { Class = "form-control input-lg text-center", Placeholder = "e.g. 1" })
+
+                                                        <br />
+
+                                                        @*@Html.TextBoxFor(modelItem => item.QuantityChange, new { Class = "form-control input-lg text-center", placeholder = "e.g. 1" })*@
+                                                    </div>
+                                                    <div class="col-md-3" style="padding-left: 0px;">
+                                                        <a class="btn btn-primary btn-lg lead minus-btn" for_id="@itemCount">
+                                                            <span class="glyphicon glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                                        </a>
+                                                        <a class="btn btn-default btn-lg lead minus-btn-10" for_id="@itemCount">
+                                                            <span class="glyphicon glyphicon glyphicon-minus" aria-hidden="true"></span><span class="glyphicon glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h4>@Html.DisplayFor(modelItem => item.Item.PackageUnit.Name)</h4>
+                                        </td>
+                                        <td>
+                                            <h4>@Html.DisplayFor(modelItem => item.Item.Serial)</h4>
+                                        </td>
+                                        <td>
+                                            <h4>@Html.DisplayFor(modelItem => item.Item.Name)</h4>
+                                        </td>
+                                        <td>
+                                            <h4>@Html.DisplayFor(modelItem => item.Item.ChinName)</h4>
+                                        </td>
+                                    </tr>
+
+                                    itemCount++;
+
+                                }
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+        </div>
+
+        <br />
+
+        <input type="submit" value="Submit" class="btn btn-default btn-lg" />
+
+    }
+
+    @section Scripts {
+        <script type="text/javascript">
+            $(".plus-btn").click(function () {
+                var for_id = $(this).attr('for_id');
+                var temp_q = $("#TransferOrder_Details_" + for_id + "__QuantityRequested");
+                //var temp_q = $("#quantity-" + for_id);
+                var temp_q_val = temp_q.val();
+                temp_q.val(parseInt(temp_q_val) + 1);
+            });
+
+            $(".minus-btn").click(function () {
+                var for_id = $(this).attr('for_id');
+                var temp_q = $("#TransferOrder_Details_" + for_id + "__QuantityRequested");
+                //var temp_q = $("#quantity-" + for_id);
+                var temp_q_val = temp_q.val();
+                if (temp_q_val != 0) {
+                    temp_q.val(parseInt(temp_q_val) - 1);
+                }
+            });
+            $(".plus-btn-10").click(function () {
+                var for_id = $(this).attr('for_id');
+                var temp_q = $("#TransferOrder_Details_" + for_id + "__QuantityRequested");
+                //var temp_q = $("#quantity-" + for_id);
+                var temp_q_val = temp_q.val();
+                temp_q.val(parseInt(temp_q_val) + 10);
+            });
+
+            $(".minus-btn-10").click(function () {
+                var for_id = $(this).attr('for_id');
+                var temp_q = $("#TransferOrder_Details_" + for_id + "__QuantityRequested");
+                //var temp_q = $("#quantity-" + for_id);
+                var temp_q_val = parseInt(temp_q.val());
+                temp_q.val(temp_q_val - 10);
+                if (temp_q.val() < 0) {
+                    temp_q.val(0);
+                }
+            });
+        </script>
+    }
+}
+else
+{
+    <p>Please call Administrator Specific OutletId.</p>
+}

@@ -1,0 +1,166 @@
+﻿@model CBMS.Models.ViewModels.StaffProfileListViewModel
+
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="col-md-8">
+            <div class="btn-toolbar" role="toolbar">
+                <div class="btn-group" role="group">
+                    <div class="btn btn-primary" role="button">
+                        @Html.ActionLink("Create New", "Create", "StaffProfile", new { deptId = Model.DepartmentId }, new { @class = "btn btn-primary", @role = "button" })
+                    </div>
+                    <div class="btn btn-default" role="button">
+                        @using (Ajax.BeginForm("ListActiveStaff",
+                            "Ajax",
+                            new { deptId = Model.DepartmentId },
+                            new AjaxOptions
+                            {
+                                InsertionMode = InsertionMode.Replace,
+                                HttpMethod = "POST",
+                                UpdateTargetId = "search-results",
+                                LoadingElementDuration = 1000,
+                                LoadingElementId = "dept-loading-element",
+                            }, new { @class = "form-inline", @role = "form" }))
+                        {
+                            <button id="search-btn" type="submit" value="Search" class="btn btn-link">Clear Filter</button>
+                        }
+                    </div>
+                    <div class="btn btn-default" role="button">
+                        @using (Ajax.BeginForm("ListFiredStaff",
+                            "Ajax",
+                            new { deptId = Model.DepartmentId },
+                            new AjaxOptions
+                            {
+                                InsertionMode = InsertionMode.Replace,
+                                HttpMethod = "POST",
+                                UpdateTargetId = "search-results",
+                                LoadingElementDuration = 1000,
+                                LoadingElementId = "dept-loading-element",
+                            }, new { @class = "form-inline", @role = "form" }))
+                        {
+                            <button id="search-btn" type="submit" value="Search" class="btn btn-link">Inactive Staff</button>
+                            @*<span class="badge">@(ViewBag.BirthdayCount)</span>*@
+                        }
+                    </div>
+                </div>
+                @*<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        More Options... <span class="caret"></span>
+                    </button>*@
+                <br />
+                <div class="btn-group" role="group">
+                    <div class="btn btn-default" role="button">
+                        @using (Ajax.BeginForm("ListExpiryingVisaStaff",
+                            "Ajax",
+                            new { deptId = Model.DepartmentId },
+                            new AjaxOptions
+                            {
+                                InsertionMode = InsertionMode.Replace,
+                                HttpMethod = "POST",
+                                UpdateTargetId = "search-results",
+                                LoadingElementDuration = 1000,
+                                LoadingElementId = "dept-loading-element",
+                            }, new { @class = "form-inline", @role = "form" }))
+                        {
+                            <button id="search-btn" type="submit" value="Search" class="btn btn-link">Expiring Visas</button>
+                            <span class="badge">@(Model.VisaAlertCount.HasValue ? Model.VisaAlertCount.Value : 0)</span>
+                        }
+                    </div>
+                    <div class="btn btn-default" role="button">
+                        @using (Ajax.BeginForm("ListStaffWithVevoUnChecked",
+                            "Ajax",
+                            new { deptId = Model.DepartmentId },
+                            new AjaxOptions
+                            {
+                                InsertionMode = InsertionMode.Replace,
+                                HttpMethod = "POST",
+                                UpdateTargetId = "search-results",
+                                LoadingElementDuration = 1000,
+                                LoadingElementId = "dept-loading-element",
+                            }, new { @class = "form-inline", @role = "form" }))
+                        {
+                            <button id="search-btn" type="submit" value="Search" class="btn btn-link">Pending VEVO</button>
+                            <span class="badge">@(Model.VevoAlertCount.HasValue ? Model.VevoAlertCount.Value : 0)</span>
+                        }
+                    </div>
+                    <div class="btn btn-default" role="button">
+                        @using (Ajax.BeginForm("ListBirthdayStaff",
+                            "Ajax",
+                            new { deptId = Model.DepartmentId },
+                            new AjaxOptions
+                            {
+                                InsertionMode = InsertionMode.Replace,
+                                HttpMethod = "POST",
+                                UpdateTargetId = "search-results",
+                                LoadingElementDuration = 1000,
+                                LoadingElementId = "dept-loading-element",
+                            }, new { @class = "form-inline", @role = "form" }))
+                        {
+                            <button id="search-btn" type="submit" value="Search" class="btn btn-link">Coming Birthday</button>
+                            <span class="badge">@(Model.BirthdayCount.HasValue ? Model.BirthdayCount.Value : 0)</span>
+                        }
+                    </div>
+                    <div class="btn btn-default" role="button">
+                        @using (Ajax.BeginForm("ListOnLeaveStaff",
+                            "Ajax",
+                            new { deptId = Model.DepartmentId },
+                            new AjaxOptions
+                            {
+                                InsertionMode = InsertionMode.Replace,
+                                HttpMethod = "POST",
+                                UpdateTargetId = "search-results",
+                                LoadingElementDuration = 1000,
+                                LoadingElementId = "dept-loading-element",
+                            }, new { @class = "form-inline", @role = "form" }))
+                        {
+                            <button id="search-btn" type="submit" value="Search" class="btn btn-link">On Leave</button>
+                            <span class="badge">@(Model.LeaveCount.HasValue ? Model.LeaveCount.Value : 0)</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @using (Ajax.BeginForm("SearchStaff",
+                "Ajax",
+                new { deptId = Model.DepartmentId },
+                new AjaxOptions
+                {
+                    InsertionMode = InsertionMode.Replace,
+                    HttpMethod = "POST",
+                    UpdateTargetId = "search-results",
+                    LoadingElementDuration = 1000,
+                    LoadingElementId = "dept-loading-element",
+                }, new { id = "search-form", @class = "form-inline", @role = "search" }))
+            {
+                <div class="input-group">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-search">
+                        </span>
+                    </div>
+                    @Html.TextBox("query", Model.query, htmlAttributes: new { @class = "form-control", @placeholder = "Staff Name / ID" })
+                    <span class="input-group-btn">
+                        <button id="search-btn" type="submit" value="Search" class="btn btn-default">Search</button>
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="dept-loading-element" hidden>Loading...</div>
+
+<div id="search-results">
+    @{Html.RenderPartial("StaffProfileList", Model.StaffProfiles, new ViewDataDictionary() { { "ShowBrandOutletDepartment", Model.Department == null } });}
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @if (!String.IsNullOrEmpty(Model.query))
+    {
+        <script type="text/javascript">
+            $(function () {
+                $("#search-form").submit();
+            });
+        </script>
+    }
+}

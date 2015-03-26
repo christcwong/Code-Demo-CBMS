@@ -1,0 +1,276 @@
+﻿@model CBMS.Models.ViewModels.ConfigPositionViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Position</h2>
+
+@if (ViewBag.BrandId != null)
+{
+    using (Html.BeginForm("ShowPosition", "ConfigPosition", FormMethod.Get, new { @class = "form-inline" }))
+    {
+        <div class="row">
+            @Html.LabelFor(model => model.Brand.Id, "Brand", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("BrandId", (SelectList)ViewBag.BrandId, "Select a Brand...", htmlAttributes: new { @class = "form-control" })
+            </div>
+            @Html.LabelFor(model => model.Brand.Outlets, "Outlet", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("OutletId", (SelectList)ViewBag.OutletId, "Select a Outlet...", htmlAttributes: new { @class = "form-control" })
+            </div>
+            @Html.LabelFor(model => model.Outlet, "Department", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("DepartmentId", (SelectList)ViewBag.DepartmentId, "Select a Department...", htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <input type="submit" value="Show Position" class="btn btn-default" />
+    }
+}
+else
+{
+    <div>
+        No Brand.
+    </div>
+}
+<br />
+@if (Model.Positions != null)
+{
+    <h4>Positions of selected department</h4>
+    using (Html.BeginForm("CreatePosition", "ConfigPosition", FormMethod.Post, new { @class = "form-inline" }))
+    {
+        <div class="form-group">
+            <label class="sr-only">Position Type: </label>
+            @Html.DropDownList("ConfigPositionTypeId", (SelectList)ViewBag.ConfigPositionTypeList, "Select a Position type...", htmlAttributes: new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <label class="sr-only">Position Name: </label>
+            @Html.EditorFor(model => model.NewPosition.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Position Name" } })
+            <br />
+            @Html.ValidationMessageFor(model => model.NewPosition.Name, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label> Paycodes: </label>
+            @Html.CheckBoxListFor(model => model.PostedConfigPayCodeValues.IDs,
+                                        model => model.AvailableConfigPayCodeValues,
+                                        model => model.Id,
+                                        model => model.Name,
+                                        model => model.SelectedConfigPayCodeValues)
+        </div>
+        @Html.HiddenFor(model => model.Brand.Id);
+    @Html.HiddenFor(model => model.Outlet.Id);
+    @Html.HiddenFor(model => model.Department.Id);
+    <input type="submit" value="Create" class="btn btn-default" />
+    }
+
+    <br />
+
+    <div id="positionList">
+        @{Html.RenderPartial("_ListPosition", Model.Positions);}
+    </div>
+    <div id="divEditPosition">
+        @{Html.RenderPartial("_EditPosition", Model);}
+    </div>
+
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        var BrandId = $("#BrandId");
+        var OutletId = $("#OutletId");
+        var DepartmentId = $("#DepartmentId");
+        var PositionId = $("#PositionId");
+        var PayCodeId = $("#PayCodeId");
+
+        var LoadOutletOfBrand = function () {
+            if (BrandId[0].selectedIndex != 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetOutletsOfBrand", "Ajax")",
+                    data: "brandId=" + BrandId.val(),
+                    beforeSend: function () {
+                        $("body").attr("style", "cursor:progress");
+                    },
+                    complete: function () {
+                        $("body").attr("style", "cursor:auto");
+                    },
+                    success: function (dataJson) {
+                        OutletId.prop("disabled", false);
+                        //OutletId.prop("readonly", false);
+                        OutletId.html('');
+                        var itemsHtml = '<option>Select Outlet...</option>';
+                        $.each(dataJson, function (i, dataJsonItem) {
+                            itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.Name + '</option>';
+                        });
+                        OutletId.html(itemsHtml);
+                        OutletId.focus();
+                        var selectedOutletId = getParameterByName('OutletId');
+                        if (selectedOutletId) {
+                            OutletId.val(selectedOutletId);
+                            LoadDepartmentOfOutlet();
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //viewport.html("Failed to load data. Please try again.");
+                        alert(errorThrown);
+                    }
+                });
+            }
+        }
+
+        var LoadDepartmentOfOutlet = function () {
+            if (OutletId[0].selectedIndex != 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetDepartmentsOfOutlet", "Ajax")",
+                    data: "outletId=" + OutletId.val(),
+                    beforeSend: function () {
+                        $("body").attr("style", "cursor:progress");
+                    },
+                    complete: function () {
+                        $("body").attr("style", "cursor:auto");
+                    },
+                    success: function (dataJson) {
+                        DepartmentId.prop("disabled", false);
+                        //DepartmentId.prop("readonly", false);
+                        DepartmentId.html('');
+                        var itemsHtml = '<option>Select Department...</option>';
+                        $.each(dataJson, function (i, dataJsonItem) {
+                            itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.Name + '</option>';
+                        });
+                        DepartmentId.html(itemsHtml);
+                        DepartmentId.focus();
+                        var selectedDepartmentId = getParameterByName('DepartmentId');
+                        if (selectedDepartmentId) {
+                            DepartmentId.val(selectedDepartmentId);
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //viewport.html("Failed to load data. Please try again.");
+                        alert(errorThrown);
+                    }
+                });
+            }
+
+        }
+
+        var LoadPositionOfDepartment = function () {
+            if (DepartmentId[0].selectedIndex != 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetPositionsOfDepartment", "Ajax")",
+                    data: "deptId=" + DepartmentId.val(),
+                    beforeSend: function () {
+                        $("body").attr("style", "cursor:progress");
+                    },
+                    complete: function () {
+                        $("body").attr("style", "cursor:auto");
+                    },
+                    success: function (dataJson) {
+                        PositionId.prop("disabled", false);
+                        //PositionId.prop("readonly", false);
+                        PositionId.html('');
+                        var itemsHtml = '<option>Select Position...</option>';
+                        $.each(dataJson, function (i, dataJsonItem) {
+                            itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.FullName + '</option>';
+                        });
+                        PositionId.html(itemsHtml);
+                        PositionId.focus();
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //viewport.html("Failed to load data. Please try again.");
+                        alert(errorThrown);
+                    }
+                });
+            }
+
+        }
+
+        var LoadPayCodeOfPosition = function () {
+            //PayCodeId.prop("disabled", true);
+            //PayCodeId.prop("readonly", true);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetPayCodesOfPosition", "Ajax")",
+                data: "positionId=" + PositionId.val(),
+                beforeSend: function () {
+                    $("body").attr("style", "cursor:progress");
+                },
+                complete: function () {
+                    $("body").attr("style", "cursor:auto");
+                },
+                success: function (dataJson) {
+                    PayCodeId.prop("disabled", false);
+                    //PayCodeId.prop("readonly", false);
+                    PayCodeId.html('');
+                    var itemsHtml = '<option>Select PayCode...</option>';
+                    $.each(dataJson, function (i, dataJsonItem) {
+                        itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.PayCode + '</option>';
+                    });
+                    PayCodeId.html(itemsHtml);
+                    PayCodeId.focus();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //viewport.html("Failed to load data. Please try again.");
+                    alert(errorThrown);
+                }
+            });
+        }
+
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        $(function () {
+            //$("#submit-button").click(function () {
+            //    alert("so it was clicked.");
+            //});
+            $("#application-form").on("submit", function () {
+                //BrandId.prop('disabled', false);
+                //OutletId.prop('disabled', false);
+                //DepartmentId.prop('disabled', false);
+                //PositionId.prop('disabled', false);
+                $('input,select').prop('disabled', false);
+            });
+            BrandId.change(LoadOutletOfBrand);
+            OutletId.change(LoadDepartmentOfOutlet);
+            PositionId.change(LoadPayCodeOfPosition);
+
+            if (BrandId.val()) {
+                LoadOutletOfBrand();
+            }
+
+        });
+    </script>
+    @Scripts.Render("~/bundles/jqueryajax")
+
+    <script>
+        function OnBegin() {
+            $("body").attr("style", "cursor:progress");
+        }
+        function OnComplete() {
+            $("body").attr("style", "cursor:auto");
+        }
+        function OnCopyComplete() {
+            $("body").attr("style", "cursor:auto");
+            alert("Copy Done.");
+        }
+        function ShowEditPositionModal() {
+            $('#EditPosition').modal('toggle');
+            $("body").attr("style", "cursor:auto");
+        }
+        function HideEditPositionModal() {
+            $('#EditPosition').modal('toggle');
+            $("body").attr("style", "cursor:auto");
+        }
+    </script>
+}
+

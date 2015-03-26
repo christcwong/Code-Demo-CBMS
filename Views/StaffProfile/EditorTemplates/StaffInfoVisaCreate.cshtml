@@ -1,0 +1,31 @@
+﻿@model CBMS.Models.Roster.StaffInfoVisaModel
+
+<div class="form-group">
+    @Html.LabelFor(model => model.PassportNumber, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-3">
+        @Html.EditorFor(model => model.PassportNumber, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.PassportNumber, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.VisaTypeId, "VisaTypeId", htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-3">
+        @Html.DropDownList("VisaTypeId", (SelectList)ViewBag.VisaTypeId, "Select a VisaType...", htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.VisaTypeId, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.IssueDate, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-3">
+        @Html.EditorFor(model => model.IssueDate, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.IssueDate, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.VisaExpiry, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-3">
+        @Html.EditorFor(model => model.VisaExpiry, new { htmlAttributes = new { @class = "form-control", data_toggle = "tooltip", data_placement = "bottom", title = "Leave it as is for permanent resident / citizen" } })
+        @Html.ValidationMessageFor(model => model.VisaExpiry, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.VevoApproved, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-3">
+        @Html.CheckBoxFor(model => model.VevoApproved, new { htmlAttributes = new { @class = "form-control col-md-1" } })
+        <a href="http://www.immi.gov.au/Services/Pages/vevo/vevo-overview.aspx" target="_blank">VEVO Website</a>
+        @Html.ValidationMessageFor(model => model.VevoApproved, "", new { @class = "text-danger" })
+    </div>
+</div>
+

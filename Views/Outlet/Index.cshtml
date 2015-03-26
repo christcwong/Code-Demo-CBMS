@@ -1,0 +1,42 @@
+﻿@model IEnumerable<CBMS.Models.Roster.OutletModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Outlet List of </h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", new { @class = "btn btn-primary" })
+</p>
+<table class="table table-bordered">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>Action</th>
+    </tr>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a href="@Url.Action("Index", "StaffProfile", new { brandId = item.Brand.Id, outletId = item.Id, })">Outlets</a>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>No Data return.</td>
+            <td>@Html.ActionLink("Create New", "Create", "", new { @class = "btn btn-primary" })</td>
+        </tr>
+    }
+
+</table>

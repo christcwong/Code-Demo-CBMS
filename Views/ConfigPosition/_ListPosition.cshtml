@@ -1,0 +1,49 @@
+﻿@model IEnumerable<CBMS.Models.Roster.PositionModel>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ConfigPositionTypeModel.PositionType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PayCodes)
+        </th>
+        <th></th>
+    </tr>
+
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ConfigPositionTypeModel.PositionType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @string.Join(", ", item.PayCodes.Select(i => i.Name));
+                </td>
+                <td>
+                    @Ajax.ActionLink("Edit", "EditPosition", new { positionId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "ShowEditPositionModal", HttpMethod = "GET", UpdateTargetId = "divEditPosition" }, new { @class = "btn btn-default" })
+                    @Ajax.ActionLink("Delete", "DeletePosition", new { positionId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "OnComplete", HttpMethod = "POST", Confirm = "Are you sure you want to deactivate this item?", UpdateTargetId = "positionList" }, new { @class = "btn btn-default" })
+                    @Ajax.ActionLink("Copy Position to Other with Same Name", "CopyPosition", new { positionId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "OnCopyComplete", HttpMethod = "POST", Confirm = "Are you sure you want to copy this item?", UpdateTargetId = "positionList" }, new { @class = "btn btn-default" })
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>No Data return.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    }
+</table>
+

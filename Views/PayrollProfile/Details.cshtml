@@ -1,0 +1,59 @@
+﻿@model CBMS.Models.Payroll.PayrollProfileModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>PayrollProfileModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Brand)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Brand.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Outlet)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Outlet.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SalaryLowerBound)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SalaryLowerBound)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SalaryUpperBound)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SalaryUpperBound)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValidUntil)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValidUntil)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index", "PayrollRecord", new { outletId = Model.OutletId, deptId = Model.DepartmentId }, null)
+</p>

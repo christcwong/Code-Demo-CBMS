@@ -1,0 +1,87 @@
+﻿@model CBMS.Models.Roster.StaffProfileAdminStatusModel
+
+@{
+    Boolean editable = true;
+    if (ViewData.Keys.Contains("Editable"))
+    {
+        editable = (bool)ViewData["Editable"];
+    }
+}
+
+<div>
+    <h4 class="pull-left">Office Use</h4>
+    @if (editable)
+    {
+        <div class="pull-right">
+            @Html.ActionLink("Edit", "EditAdminStatus", new { adminStatusId = Model.Id, StaffProfileId = ViewData["StaffProfileId"] })
+        </div>
+    }
+    <div class="clearfix"></div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LeaveDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LeaveDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LeaveReason)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LeaveReason)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UniformDeposit)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UniformDeposit)
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VoluntaryHolidayPay)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VoluntaryHolidayPay)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ConfirmedPayCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ConfirmedPayCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Note)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Note)
+        </dd>
+
+        <dt>
+            Staff create date
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ObjectCreateTime)
+        </dd>
+    </dl>
+</div>

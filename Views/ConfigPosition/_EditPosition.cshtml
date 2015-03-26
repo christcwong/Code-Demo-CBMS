@@ -1,0 +1,44 @@
+﻿@model CBMS.Models.ViewModels.ConfigPositionViewModel
+
+@if (Model != null)
+{
+    using (Ajax.BeginForm("EditPosition", new AjaxOptions { OnBegin = "OnBegin", OnComplete = "HideEditPositionModal", HttpMethod = "POST", UpdateTargetId = "positionList" }))
+    {
+
+        <div class="modal fade" id="EditPosition">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Edit Bank</h4>
+                    </div>
+                    <div class="modal-body">
+                        @Html.HiddenFor(model => model.EditPosition.Id)
+                        <div class="form-group">
+                            <label class="sr-only">Position Type: </label>
+                            @Html.DropDownList("ConfigPositionTypeId", (SelectList)ViewBag.ConfigPositionTypeList, "Select a Position type...", htmlAttributes: new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only">Position Name: </label>
+                            @Html.EditorFor(model => model.EditPosition.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Position Name" } })
+                            <br />
+                            @Html.ValidationMessageFor(model => model.EditPosition.Name, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label> Paycodes: </label>
+                            @Html.CheckBoxListFor(model => model.PostedConfigPayCodeValues.IDs,
+                                        model => model.AvailableConfigPayCodeValues,
+                                        model => model.Id,
+                                        model => model.Name,
+                                        model => model.SelectedConfigPayCodeValues)
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" value="Submit" class="btn btn-primary" />
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    }
+}

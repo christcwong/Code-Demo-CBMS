@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delivery System</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Outlet Orders</h2>
+        <p>View Outlet Order...</p>
+        <p><a class="btn btn-default" href="@Url.Action("ListTransferOrder", "OutletOrder")">Manage &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Outlet Items List</h2>
+        <p>Adding stocks item into each outlet for order...</p>
+        <p><a class="btn btn-default" href="@Url.Action("ListOutletItem")">Manage &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Stock Items</h2>
+        <p>View, Import from MYOB Excel, Categories...</p>
+        <p><a class="btn btn-default" href="@Url.Action("ListAllItem")">Manage &raquo;</a></p>
+    </div>
+</div>

@@ -1,0 +1,303 @@
+﻿@model CBMS.Models.Roster.StaffProfileModel
+
+@{
+    ViewBag.Title = "StaffProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>StaffProfile</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Staff Profile</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.RowVersion)
+        @*@Html.HiddenFor(model => model.BrandId)*@
+        @*@Html.HiddenFor(model => model.DepartmentId)*@
+        @Html.HiddenFor(model => model.StaffInfoId)
+        @Html.HiddenFor(model => model.AdminStatusId)
+        @Html.HiddenFor(model => model.PaymentDetailId)
+        @Html.HiddenFor(model => model.LeaveProfileId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StaffId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StaffId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StaffId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.RosterName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.RosterName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.RosterName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.BrandId, "Brand", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("BrandId", (SelectList)ViewBag.BrandIdList, "Select a Brand...", htmlAttributes: new { @class = "form-control" })
+                @*@Html.HiddenFor(model=>model.BrandId)*@
+                @*@Html.DisplayFor(model=>model.Brand.Name)*@
+                @*@Html.ValidationMessageFor(model => model.BrandId, "", new { @class = "text-danger" })*@
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Brand.Outlets, "Outlet", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("OutletId", (SelectList)ViewBag.OutletIdList, "Select a Outlet...", htmlAttributes: new
+               {
+                   @class = "form-control"
+                   //, @readonly = "readonly"
+                   //,
+                   //disabled = "disabled"
+               })
+                @*@Html.HiddenFor(model => model.Department.OutletId)*@
+                @*@Html.DisplayFor(model => model.Department.Outlet.Name)*@
+                @*@Html.ValidationMessageFor(model => model.Department.OutletId, "", new { @class = "text-danger" })*@
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DepartmentId, "Department", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("DepartmentId", (SelectList)ViewBag.DepartmentIdList, "Select a Department...", htmlAttributes: new
+               {
+                   @class = "form-control"
+                   //,
+                   //@readonly = "readonly"
+                   //,
+                   //disabled = "disabled"
+               })
+
+                @*@Html.HiddenFor(model => model.DepartmentId)
+                @Html.DisplayFor(model => model.Department.Name)*@
+                @*@Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "text-danger" })*@
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PositionId, "Position", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("PositionId", (SelectList)ViewBag.PositionIdList, "Select a Position...", htmlAttributes: new
+               {
+                   @class = "form-control"
+                   //,
+                   //@readonly = "readonly"
+                   //,
+                   //disabled = "disabled"
+               })
+                @*@Html.HiddenFor(model => model.PositionId)
+                @Html.DisplayFor(model => model.Position.Name)*@
+                @Html.ValidationMessageFor(model => model.PositionId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PayCodeId, "PayCodeId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("PayCodeId", (SelectList)ViewBag.PayCodeIdList, "Select a PayCode...", htmlAttributes: new
+               {
+                   @class = "form-control"
+                   //,
+                   //@readonly = "readonly"
+                   //,
+                   //disabled = "disabled"
+               })
+                @Html.ValidationMessageFor(model => model.PayCodeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                @Html.Label("Prefered Shift")
+                @Html.Label("(Choose 2)")
+            </div>
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.PreferOpeneingShift)
+                @Html.Label("Opening")
+
+                @Html.EditorFor(model => model.PreferMidShift)
+                @Html.Label("Mid")
+
+                @Html.EditorFor(model => model.PreferClosingShift)
+                @Html.Label("Closing")
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @if (ViewBag.StaffProfileId != null)
+    {
+        @Html.ActionLink("Back to Staff Profile", "Details", new { Id = ViewBag.StaffProfileId })
+    }
+    else
+    {
+        @Html.ActionLink("Back to List", "Index")
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script type="text/javascript">
+        var BrandId = $("#BrandId");
+        var OutletId = $("#OutletId");
+        var DepartmentId = $("#DepartmentId");
+        var PositionId = $("#PositionId");
+        var PayCodeId = $("#PayCodeId");
+
+        
+        var LoadOutletOfBrand = function () {
+            OutletId.prop("disabled", true);
+            DepartmentId.prop("disabled", true);
+            PositionId.prop("disabled", true);
+            PayCodeId.prop("disabled", true);
+            DepartmentId.html('<option value="0">Select Outlet...</option>');
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetOutletsOfBrand", "Ajax")",
+                data: "brandId=" + BrandId.val(),
+            beforeSend: function () {
+                $("body").attr("style", "cursor:progress");
+            },
+            complete: function () {
+                $("body").attr("style", "cursor:auto");
+            },
+            success: function (dataJson) {
+                OutletId.prop("disabled", false);
+                OutletId.html('');
+                var itemsHtml = '<option value="0">Select Outlet..</option>';
+                $.each(dataJson, function (i, dataJsonItem) {
+                    itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.Name + '</option>';
+                });
+                OutletId.html(itemsHtml);
+                OutletId.focus();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                //viewport.html("Failed to load data. Please try again.");
+                alert(errorThrown);
+            }
+        });
+        }
+
+        var LoadDepartmentOfOutlet = function () {
+            DepartmentId.prop("disabled", true);
+            PositionId.prop("disabled", true);
+            PayCodeId.prop("disabled", true);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetDepartmentsOfOutlet", "Ajax")",
+                data: "outletId=" + OutletId.val(),
+            beforeSend: function () {
+                $("body").attr("style", "cursor:progress");
+            },
+            complete: function () {
+                $("body").attr("style", "cursor:auto");
+            },
+            success: function (dataJson) {
+                DepartmentId.prop("disabled", false);
+                //DepartmentId.prop("readonly", false);
+                DepartmentId.html('');
+                var itemsHtml = '<option value="0">Select Outlet...</option>';
+                $.each(dataJson, function (i, dataJsonItem) {
+                    itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.Name + '</option>';
+                });
+                DepartmentId.html(itemsHtml);
+                DepartmentId.focus();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                //viewport.html("Failed to load data. Please try again.");
+                alert(errorThrown);
+            }
+        });
+        }    
+
+        var LoadPositionOfDepartment = function () {
+            PositionId.prop("disabled", true);
+            PayCodeId.prop("disabled", true);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetPositionsOfDepartment", "Ajax")",
+                data: "deptId=" + DepartmentId.val(),
+                beforeSend: function () {
+                    $("body").attr("style", "cursor:progress");
+                },
+                complete: function () {
+                    $("body").attr("style", "cursor:auto");
+                },
+                success: function (dataJson) {
+                    PositionId.prop("disabled", false);
+                    PositionId.html('');
+                    var itemsHtml = '<option>Select Position...</option>';
+                    $.each(dataJson, function (i, dataJsonItem) {
+                        itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.FullName + '</option>';
+                    });
+                    PositionId.html(itemsHtml);
+                    PositionId.focus();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            });
+        }
+
+        var LoadPayCodeOfPosition = function () {
+            PayCodeId.prop("disabled", true);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetPayCodesOfPosition", "Ajax")",
+                data: "positionId=" + PositionId.val(),
+                beforeSend: function () {
+                    $("body").attr("style", "cursor:progress");
+                },
+                complete: function () {
+                    $("body").attr("style", "cursor:auto");
+                },
+                success: function (dataJson) {
+                    PayCodeId.prop("disabled", false);
+                    PayCodeId.html('');
+                    var itemsHtml = '<option>Select PayCode...</option>';
+                    $.each(dataJson, function (i, dataJsonItem) {
+                        itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.Name + '</option>';
+                    });
+                    PayCodeId.html(itemsHtml);
+                    PayCodeId.focus();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //viewport.html("Failed to load data. Please try again.");
+                    alert(errorThrown);
+                }
+            });
+        }
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+
+            $("#application-form").on("submit", function () {
+                $('input,select').prop('disabled', false);
+            });
+            BrandId.change(LoadOutletOfBrand);
+            OutletId.change(LoadDepartmentOfOutlet);
+            DepartmentId.change(LoadPositionOfDepartment);
+            PositionId.change(LoadPayCodeOfPosition);
+
+        });
+</script>
+}

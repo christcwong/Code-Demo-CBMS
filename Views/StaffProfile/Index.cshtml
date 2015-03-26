@@ -1,0 +1,334 @@
+﻿@model IEnumerable<CBMS.Models.Roster.StaffProfileModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Staff</h2>
+<div id="query" hidden>
+    @(ViewBag.Query)
+</div>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="col-md-12">
+            @*<div class="col-md-1">
+                    @using (Ajax.BeginForm("GetStaffProfilesOfDepartment",
+                        "Ajax",
+                        FormMethod.Post,
+                        new AjaxOptions
+                        {
+                            InsertionMode = InsertionMode.Replace,
+                            HttpMethod = "POST",
+                            UpdateTargetId = "department-result",
+                            LoadingElementDuration = 1000,
+                            LoadingElementId = "loading-element",
+                            OnBegin = "ClearAllSearch",
+                        }, new { @class = "form-inline", @role = "form" }))
+                    {
+                        <button id="search-btn" type="submit" value="Search" class="btn btn-default btn-block">All Staff</button>
+                    }
+                </div>
+                <div class="col-md-1">- Or -</div>*@
+            @Html.Label("Brand", htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.DropDownList("BrandId", (SelectList)ViewBag.BrandIdList, "-- All Staff --", htmlAttributes: new { @class = "form-control" })
+            </div>
+
+            @Html.Label("Outlet", htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.DropDownList("OutletId", (SelectList)ViewBag.OutletIdList, "-- Whole Brand --", htmlAttributes: new
+                    {
+                        @class = "form-control",
+                        disabled = "disabled"
+                    })
+            </div>
+
+            @Html.Label("Department", htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.DropDownList("DepartmentId", (SelectList)ViewBag.DepartmentIdList, "-- Whole Outlet --", htmlAttributes: new
+                    {
+                        @class = "form-control",
+                        disabled = "disabled"
+                    })
+            </div>
+            <button class="btn btn-default col-md-3" id="search" @*disabled*@>Search</button>
+        </div>
+    </div>
+</div>
+
+
+<p id="loading-element" hidden>
+    Loading...
+</p>
+<div id="department-result">
+
+</div>
+
+
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryajax")
+    <script type="text/javascript">
+        var BrandId = $("#BrandId");
+        var OutletId = $("#OutletId");
+        var DepartmentId = $("#DepartmentId");
+        var query = $("#query");
+        var ViewPortId = $("#department-result");
+        var LoadingElementId = $("#loading-element");
+        var searchId = $("#search");
+
+        var LoadOutletOfBrand = function () {
+            //searchId.prop("disabled", true);
+            //if (BrandId.val() && BrandId.val() != 0) {
+            //    searchId.prop("disabled", false);
+            //}
+            OutletId.prop("disabled", true);
+            //OutletId.prop("readonly", true);
+            DepartmentId.prop("disabled", true);
+            DepartmentId.html('<option value="0">Select Outlet...</option>');
+            //DepartmentId.prop("readonly", true);
+            if (BrandId.val() && BrandId.val() != 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetOutletsOfBrand", "Ajax")",
+                    data: "brandId=" + BrandId.val(),
+                    beforeSend: function () {
+                        $("body").attr("style", "cursor:progress");
+                    },
+                    complete: function () {
+                        $("body").attr("style", "cursor:auto");
+                    },
+                    success: function (dataJson) {
+                        OutletId.prop("disabled", false);
+                        //OutletId.prop("readonly", false);
+                        OutletId.html('');
+                        var itemsHtml = '<option value="0">-- Whole Brand --</option>';
+                        $.each(dataJson, function (i, dataJsonItem) {
+                            itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.Name + '</option>';
+                        });
+                        OutletId.html(itemsHtml);
+                        OutletId.focus();
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //viewport.html("Failed to load data. Please try again.");
+                        alert(errorThrown);
+                    }
+                });
+            } else {
+                OutletId.html('<option value="0">-- Whole Brand --</option>');
+            }
+        }
+
+        var LoadDepartmentOfOutlet = function () {
+            //searchId.prop("disabled", true);
+            //if (OutletId.val() && OutletId.val() != 0) {
+            //    searchId.prop("disabled", false);
+            //}
+            //$(OutletId.children("option")[0]).prop('disabled', true);
+            DepartmentId.prop("disabled", true);
+            //DepartmentId.prop("readonly", true);
+            if (OutletId.val() && OutletId.val() != 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetDepartmentsOfOutlet", "Ajax")",
+                    data: "outletId=" + OutletId.val(),
+                    beforeSend: function () {
+                        $("body").attr("style", "cursor:progress");
+                    },
+                    complete: function () {
+                        $("body").attr("style", "cursor:auto");
+                    },
+                    success: function (dataJson) {
+                        DepartmentId.prop("disabled", false);
+                        //DepartmentId.prop("readonly", false);
+                        DepartmentId.html('');
+                        var itemsHtml = '<option value="0">-- Whole Outlet --</option>';
+                        $.each(dataJson, function (i, dataJsonItem) {
+                            itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.Name + '</option>';
+                        });
+                        DepartmentId.html(itemsHtml);
+                        DepartmentId.focus();
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //viewport.html("Failed to load data. Please try again.");
+                        alert(errorThrown);
+                    }
+                });
+            }
+        }
+
+
+        var LoadStaffProfileOfBrand = function () {
+            //$(BrandId.children("option")[0]).prop('disabled', true);
+            if (!BrandId.val()) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetStaffProfilesOfBrand", "Ajax")",
+                    beforeSend: function () {
+                        $("body").attr("style", "cursor:progress");
+                        LoadingElementId.show(400);
+                    },
+                    complete: function () {
+                        $("body").attr("style", "cursor:auto");
+                        LoadingElementId.hide(400);
+                    },
+                    success: function (dataHtml) {
+                        ViewPortId.html(dataHtml);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(errorThrown);
+                    }
+                });
+            } else {
+                if (BrandId.val() != 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("GetStaffProfilesOfBrand", "Ajax")",
+                        @if (String.IsNullOrEmpty(ViewBag.Query)) {
+                            @Html.Raw("data: \"brandId=\" + BrandId.val(),")
+                        }else{
+                            @Html.Raw("data: \"brandId=\" + BrandId.val()+\"&query=" + ViewBag.Query + ",")
+                        }
+                        beforeSend: function () {
+                            $("body").attr("style", "cursor:progress");
+                            LoadingElementId.show(400);
+                        },
+                        complete: function () {
+                            $("body").attr("style", "cursor:auto");
+                            LoadingElementId.hide(400);
+                        },
+                        success: function (dataHtml) {
+                            ViewPortId.html(dataHtml);
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert(errorThrown);
+                        }
+                    });
+                    LoadOutletOfBrand();
+                }
+            }
+        }
+
+        var LoadStaffProfileOfOutlet = function () {
+            //$(OutletId.children("option")[0]).prop('disabled', true);
+            if (!OutletId.val() || OutletId.val() == 0) {
+                LoadStaffProfileOfBrand();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetStaffProfilesOfOutlet", "Ajax")",
+                @if (String.IsNullOrEmpty(ViewBag.Query)) {
+                        @Html.Raw("data: \"outletId=\" + OutletId.val(),")
+                    }else{
+                        @Html.Raw("data: \"outletId=\" + OutletId.val()+\"&query=" + ViewBag.Query + ",")
+                    }
+                beforeSend: function () {
+                    $("body").attr("style", "cursor:progress");
+                    LoadingElementId.show(400);
+                },
+                complete: function () {
+                    $("body").attr("style", "cursor:auto");
+                    LoadingElementId.hide(400);
+                },
+                success: function (dataHtml) {
+                    ViewPortId.html(dataHtml);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            });
+            LoadDepartmentOfOutlet();
+        }
+
+        var LoadStaffProfileOfDepartment = function () {
+            //$(DepartmentId.children("option")[0]).prop('disabled', true);
+            if (!DepartmentId.val() || DepartmentId.val() == 0) {
+                LoadStaffProfileOfOutlet();
+                return;
+            };
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetStaffProfilesOfDepartment", "Ajax")",
+                @if (String.IsNullOrEmpty(ViewBag.Query)) {
+                    @Html.Raw("data: \"deptId=\" + DepartmentId.val(),")
+                }else{
+                    @Html.Raw("data: \"deptId=\" + DepartmentId.val()+\"&query="+ViewBag.Query+",")
+                }
+                beforeSend: function () {
+                    $("body").attr("style", "cursor:progress");
+                    LoadingElementId.show(400);
+                },
+                complete: function () {
+                    $("body").attr("style", "cursor:auto");
+                    LoadingElementId.hide(400);
+                },
+                success: function (dataHtml) {
+                    ViewPortId.html(dataHtml);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            });
+        };
+        var ClearAllSearch = function () {
+            BrandId.val("");
+            OutletId.html("<option>-- Whole Brand --</option>")
+            OutletId.val("");
+            OutletId.prop("disable", true);
+            DepartmentId.html("<option>-- Whole Outlet --</option>")
+            DepartmentId.val("");
+            DepartmentId.prop("disable", true);
+        }
+        var searchClick = function () {
+            LoadStaffProfileOfDepartment();
+        }
+
+
+        $(function () {
+            $("#more-options-viewport").hide();
+            $("#more-options-btn").click(function () {
+                $("#more-options-viewport").toggle();
+            });
+            $('[data-toggle="tooltip"]').tooltip();
+            $("#application-form").on("submit", function () {
+                $('input,select').prop('disabled', false);
+            });
+            //$(BrandId.children("option")[0]).prop('disabled', true);
+            BrandId.change(LoadOutletOfBrand);
+            OutletId.change(LoadDepartmentOfOutlet);
+            //DepartmentId.change(LoadStaffProfileOfDepartment);
+            //DepartmentId.change(function () {
+            //    searchId.prop("disabled", true);
+            //    if (DepartmentId.val()) {
+            //        DepartmentId.prop("disabled", false);
+            //    }
+            //});
+            searchId.click(searchClick);
+
+            if (BrandId.val() && !OutletId.val()) {
+                OutletId.prop("disabled", false);
+                //LoadOutletOfBrand();
+                LoadStaffProfileOfBrand();
+            }
+
+            if (BrandId.val() && OutletId.val() && !DepartmentId.val()) {
+                BrandId.prop("disabled", false);
+                OutletId.prop("disabled", false);
+                DepartmentId.prop("disabled", false);
+                //LoadDepartmentOfOutlet();
+                LoadStaffProfileOfOutlet();
+            }
+
+            if (BrandId.val() && OutletId.val() && DepartmentId.val()) {
+                BrandId.prop("disabled", false);
+                OutletId.prop("disabled", false);
+                DepartmentId.prop("disabled", false);
+                LoadStaffProfileOfDepartment();
+            }
+
+        });
+    </script>
+}

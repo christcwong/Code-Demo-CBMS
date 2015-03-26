@@ -1,0 +1,191 @@
+﻿@model CBMS.Models.Roster.StaffProfileModel
+@{
+    Boolean editable = (bool)ViewData["Editable"];
+}
+
+<div>
+    <h4 class="pull-left">Work Profile</h4>
+    @if (editable)
+    {
+        <div class="pull-right">
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
+        </div>
+    }
+    <div class="clearfix"></div>
+
+    <hr />
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-2">
+                <label>@Html.DisplayNameFor(model => model.StaffId)</label>
+            </div>
+            <div class="col-md-2">
+                @Html.DisplayFor(model => model.StaffId)
+            </div>
+
+            <div class="col-md-2">
+                <label>@Html.DisplayNameFor(model => model.RosterName)</label>
+            </div>
+
+            <div class="col-md-2">
+                @Html.DisplayFor(model => model.RosterName)
+            </div>
+
+            <div class="col-md-2">
+                <label>@Html.DisplayNameFor(model => model.StaffInfo.FullName)</label>
+            </div>
+
+            <div class="col-md-2">
+                @Html.DisplayFor(model => model.StaffInfo.FullName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2">
+                <label>@Html.DisplayNameFor(model => model.Brand)</label>
+            </div>
+            <div class="col-md-2">
+                @Html.DisplayFor(model => model.Brand.Name)
+            </div>
+        
+            <div class="col-md-2">
+                <label>@Html.DisplayNameFor(model => model.Department.Outlet)</label>
+            </div>
+            <div class="col-md-2">
+                @Html.DisplayFor(model => model.Department.Outlet.Name)
+            </div>
+
+            <div class="col-md-2">
+                <label>@Html.DisplayNameFor(model => model.Department)</label>
+            </div>
+            <div class="col-md-2">
+                @Html.DisplayFor(model => model.Department.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2">
+                <label>@Html.DisplayNameFor(model => model.Position)</label>
+            </div>
+
+            <div class="col-md-2">
+                @Html.DisplayFor(model => model.Position.Name)
+            </div>
+
+            <div class="col-md-2">
+                <label>@Html.DisplayNameFor(model => model.Position.ConfigPositionTypeModel)</label>
+            </div>
+
+            <div class="col-md-2">
+                @Html.DisplayFor(model => model.Position.ConfigPositionTypeModel.PositionType)
+            </div>
+
+            <div class="col-md-2">
+                <label>@Html.DisplayNameFor(model => model.PayCode)</label>
+            </div>
+
+            <div class="col-md-2">
+                @Html.DisplayFor(model => model.PayCode.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            <div class="col-md-2">
+                <label>@Html.DisplayNameFor(model => model.LeaveProfile.AccumulatedLeaveCount)</label>
+            </div>
+            <div class="col-md-2">
+                @Html.DisplayFor(model => model.LeaveProfile.AccumulatedLeaveCount)
+                <span>Days</span>
+            </div>
+
+            <div class="col-md-2">
+                <label>@Html.DisplayName("Prefered Shift")</label>
+            </div>
+            <div class="col-md-6">
+                @Html.DisplayName("Opening")
+                @Html.DisplayFor(model => model.PreferOpeneingShift)
+                @Html.DisplayName("Mid")
+                @Html.DisplayFor(model => model.PreferMidShift)
+                @Html.DisplayName("Closing")
+                @Html.DisplayFor(model => model.PreferClosingShift)
+            </div>
+        </div>
+    </div>
+</div>
+
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a data-toggle="tab" href="#StaffInfo">Staff Info</a></li>
+    <li role="presentation"><a data-toggle="tab" href="#StaffProfiles">Work Profiles</a></li>
+    <li role="presentation"><a data-toggle="tab" href="#Visas">Visas</a></li>
+    <li role="presentation"><a data-toggle="tab" href="#JobHistories">Other Job Histories</a></li>
+    <li role="presentation"><a data-toggle="tab" href="#AdminStatus">Admin Status</a></li>
+    <li role="presentation"><a data-toggle="tab" href="#PaymentDetail">Payment Detail</a></li>
+    <li role="presentation"><a data-toggle="tab" href="#LeaveProfile">Leave Profile</a></li>
+    <li role="presentation"><a data-toggle="tab-ajax" href="/Ajax/GetStaffHistory?staffProfileId=@(Model.Id)" data-target="#Log">Log</a></li>
+</ul>
+<div class="tab-content">
+    <div id="StaffInfo" class="tab-pane fade in active">
+        @{Html.RenderPartial("DisplayTemplates/StaffInfoDetails", Model.StaffInfo, new ViewDataDictionary { { "StaffProfileId", Model.Id }, { "Editable", editable } });}
+    </div>
+    <div id="StaffProfiles" class="tab-pane fade">
+        <div>
+            <h4 class="pull-left">Work Profiles</h4>
+            @if (editable)
+            {
+                <div class="pull-right">
+                    @Html.ActionLink("Add...", "AddStaffProfileToStaff", new { StaffInfoId = Model.StaffInfoId, StaffProfileId = Model.Id })
+                </div>
+            }
+            <div class="clearfix"></div>
+            <hr />
+            @{Html.RenderPartial("StaffProfileList", Model.StaffInfo.StaffProfiles.OrderBy(prof => prof.Status).ThenBy(prof => prof.Brand.Name).ThenBy(prof => prof.Department.Outlet.Name).ThenBy(prof => prof.Department.Name));}
+        </div>
+    </div>
+    <div id="Visas" class="tab-pane fade">
+        <div>
+            <h4 class="pull-left">Visas</h4>
+            @if (editable)
+            {
+                <div class="pull-right">
+                    @Html.ActionLink("Edit", "EditVisas", new { id = Model.Id })
+                </div>
+            }
+            <div class="clearfix"></div>
+            <hr />
+            @{
+                int i = 0;
+                for (i = 0; i < Model.StaffInfo.Visas.Count; i++)
+                {
+                    //SelectList visaList = ViewBag.VisaIdList;
+                    //ViewBag.VisaIdList = new SelectList(visaList,visa.Id);
+                    if (Model.StaffInfo.Visas.Count > 1)
+                    {
+                        Html.Raw("Visa Number " + (i + 1) + ":<br/><hr/>");
+                    }
+                    Html.RenderPartial("DisplayTemplates/StaffInfoVisaDetails", Model.StaffInfo.Visas[i]);
+                }
+            }
+        </div>
+    </div>
+    <div id="JobHistories" class="tab-pane fade">
+        @{Html.RenderPartial("DisplayTemplates/StaffInfoJobHistoryDetails", Model.StaffInfo.JobHistories, new ViewDataDictionary { { "StaffInfoId", Model.StaffInfoId }, { "Editable", editable }, { "StaffProfileId", Model.Id } });}
+    </div>
+    <div id="AdminStatus" class="tab-pane fade">
+        @{Html.RenderPartial("DisplayTemplates/StaffProfileAdminStatusDetails", Model.AdminStatus, new ViewDataDictionary { { "StaffProfileId", Model.Id }, { "Editable", editable } });}
+    </div>
+    <div id="PaymentDetail" class="tab-pane fade">
+        @{Html.RenderPartial("DisplayTemplates/StaffProfilePaymentDetailDetails", Model.PaymentDetail, new ViewDataDictionary { { "StaffProfileId", Model.Id }, { "Editable", editable } });}
+    </div>
+    <div id="LeaveProfile" class="tab-pane fade">
+        @{Html.RenderPartial("DisplayTemplates/StaffProfileLeaveProfileDetails", Model.LeaveProfile, new ViewDataDictionary { { "StaffProfileId", Model.Id }, { "Editable", editable } });}
+    </div>
+    <div id="Log" class="tab-pane fade">
+        Loading...
+    </div>
+
+</div>
+
+<p>
+    @Html.ActionLink("Back to List", "Index", new { deptId = Model.DepartmentId })
+</p>

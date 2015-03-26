@@ -1,0 +1,183 @@
+﻿@model IEnumerable<CBMS.Models.Inventory.TransferOrderModel>
+
+@{
+    ViewBag.Title = "ListOutletOrder";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>List Transfer Order</h2>
+
+@if (ViewBag.BrandIdList != null)
+{
+    using (Html.BeginForm("ListTransferOrder", "OutletOrder", FormMethod.Get, new { @class = "form-inline" }))
+    {
+        <div class="row">
+            @Html.Label("Brand", htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-3">
+                @Html.DropDownList("BrandId", (SelectList)ViewBag.BrandIdList, "Select Brand...", htmlAttributes: new { @class = "form-control" })
+            </div>
+            @Html.Label("Outlet", htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-3">
+                @Html.DropDownList("OutletId", (SelectList)ViewBag.OutletIdList, "Select Outlet...", htmlAttributes: new { @class = "form-control" })
+            </div>
+            @Html.Label("Status", htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-3">
+                @Html.DropDownList("OrderStatus", (List<SelectListItem>)ViewBag.OrderStatusList, "All Status...", new { Class = "form-control" })
+
+                @*@Html.EnumDropDownListFor(model => new CBMS.Models.Inventory.TransferOrderModel() { OrderStatusValue = -1 }.OrderStatus, "All Status...", new { @class = "form-control" })*@
+            </div>
+        </div>
+        <br />
+        <input type="submit" value="Show Outlet Order" class="btn btn-primary" />
+    }
+}
+else
+{
+    <div>
+        No Brand.
+    </div>
+}
+
+<br />
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.IssueDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrderStatus)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DestinationLocation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Note)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.HiddenFor(modelItem => item.ObjectCreateTime)
+                @Html.HiddenFor(modelItem => item.ObjectUpdateTime)
+                @Html.DisplayFor(modelItem => item.IssueDate)
+                @Html.HiddenFor(modelItem => item.EffectiveDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderStatus)
+                @Html.HiddenFor(modelItem => item.OrderStatusValue)
+            </td>
+            <td>
+                @Html.HiddenFor(modelItem => item.SourceLocationId)
+                @Html.HiddenFor(modelItem => item.DestinationLocationId)
+                @Html.DisplayFor(modelItem => item.DestinationLocation.Name)
+                @Html.HiddenFor(modelItem => item.IssuerId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Note)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "ListTransferOrderDetail", new { transferOrderId = item.Id }, new { Class = "btn btn-primary" })
+                @Html.ActionLink("Done", "DoneTransferOrder", new { transferOrderId = item.Id }, new { Class = "btn btn-default" })
+            </td>
+        </tr>
+    }
+
+</table>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryajax")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        var BrandId = $("#BrandId");
+        var OutletId = $("#OutletId");
+
+        var LoadOutletOfBrand = function () {
+            if (BrandId[0].selectedIndex != 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetOutletsOfBrand", "Ajax")",
+                    data: "brandId=" + BrandId.val(),
+                    beforeSend: function () {
+                        $("body").attr("style", "cursor:progress");
+                    },
+                    complete: function () {
+                        $("body").attr("style", "cursor:auto");
+                    },
+                    success: function (dataJson) {
+                        OutletId.prop("disabled", false);
+                        //OutletId.prop("readonly", false);
+                        OutletId.html('');
+                        var itemsHtml = '<option>Select Outlet...</option>';
+                        $.each(dataJson, function (i, dataJsonItem) {
+                            itemsHtml += '<option value="' + dataJsonItem.Id + '">' + dataJsonItem.Name + '</option>';
+                        });
+                        OutletId.html(itemsHtml);
+                        OutletId.focus();
+                        var selectedOutletId = getParameterByName('OutletId');
+                        if (selectedOutletId) {
+                            OutletId.val(selectedOutletId);
+                            //LoadDepartmentOfOutlet();
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //viewport.html("Failed to load data. Please try again.");
+                        alert(errorThrown);
+                    }
+                });
+            }
+        }
+
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        $(function () {
+            $("#application-form").on("submit", function () {
+                $('input,select').prop('disabled', false);
+            });
+            BrandId.change(LoadOutletOfBrand);
+
+            if (BrandId.val() && BrandId.val() != "" && !OutletId.val()) {
+                LoadOutletOfBrand();
+            };
+
+            @*$('a[data-confirm-message]').confirmModal();
+
+            // $().each is used because we are getting only one instance
+            // with the use of .autocomplete("instance"),
+            // which is used for modifying _renderItem Extension
+            $('input[data-provide="typeahead"]').each(function () {
+                $(this).autocomplete({
+                    source: "@Url.Action("GetItems","Ajax")",
+                    select: function (event, ui) {
+                        var $input = $(this);
+                        $input.val(ui.item.Serial);
+                        return false;
+                    },
+                    focus: function (event, ui) {
+                        $(this).val(ui.item.Serial);
+                        return false;
+                    },
+                    messages: {
+                        noResults: '',
+                        results: function () { }
+                    },
+                }).autocomplete("instance")._renderItem = function (ul, item) {
+                    return $("<li>")
+                      .append("<a>" + item.Serial + " - " + item.MYOBLabel + " - " + item.Unit + "</a>")
+                      .appendTo(ul);
+                };
+            });*@
+
+        });
+    </script>
+
+}

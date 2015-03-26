@@ -1,0 +1,167 @@
+﻿@model CBMS.Models.Inventory.TransferOrderModel
+
+@*
+    _WHO______|_DATE_______|_COMMENT_____________________________________________________________
+    Chris     | 2015-03-06 | This version is set different to the version @ CBMS_OutletOrder with
+              |            | editing and submitting link
+*@
+
+@using CBMS.Utilities;
+@{
+    ViewBag.Title = "ListTransferOrderDetail";
+    Boolean? printFriendly = (Boolean?)ViewBag.PrintFriendly;
+    if (!printFriendly.HasValue || printFriendly.Value == false)
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+<div>
+    <h2>Transfer Order Detail </h2>
+    <h4>Order ID: @Model.Id</h4>
+    <h4>@Model.DestinationLocation.Name - @Model.IssueDate</h4>
+
+</div>
+<div class="hidden-print pull-right">
+    @if (!printFriendly.HasValue || printFriendly.Value == false)
+    {
+        @Html.ActionLink("Print-friendly Version", "ListTransferOrderDetail", new { transferOrderId = Model.Id, PrintFriendly = true }, new { @class = "btn btn-default" })
+    }
+    else
+    {
+        <div class="form-group">
+            <input id="print-button" type="button" class="form-control btn-primary" value="Print" />
+            @Html.ActionLink("Back to Normal Version", "ListTransferOrderDetail", new { transferOrderId = Model.Id }, new { @class = "btn btn-default" })
+        </div>
+    }
+</div>
+<div class="clearfix"></div>
+<br />
+
+@using (Html.BeginForm("DoneTransferOrder", "OutletOrder", @*new { transferOrderId = Model.Id },*@ FormMethod.Post, new { @class = "form" }))
+{
+    @Html.HiddenFor(model => model.Id)
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => new CBMS.Models.Inventory.ItemModel().Serial)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => new CBMS.Models.Inventory.TransferOrderDetailModel().QuantityRequested)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => new CBMS.Models.Inventory.TransferOrderDetailModel().QuantityChange)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => new CBMS.Models.Inventory.ItemModel().PackageUnit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => new CBMS.Models.Inventory.ItemModel().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => new CBMS.Models.Inventory.ItemModel().ChinName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => new CBMS.Models.Inventory.TransferOrderDetailModel().Note)
+            </th>
+            <th>
+            </th>
+        </tr>
+        @if (Model.Details != null && Model.Details.Any())
+        {
+            for (int i = 0; i < Model.Details.Count(); i++)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Details[i].Item.Serial)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Details[i].QuantityRequested)
+                    </td>
+                    <td>
+                        @if (!printFriendly.HasValue || printFriendly.Value == false)
+                        {
+                            @Html.EditorFor(modelItem => Model.Details[i].QuantityChange, new { htmlAttributes = new { @class = "form-control" } })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => Model.Details[i].QuantityChange, new { htmlAttributes = new { @class = "form-control" } })
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Details[i].Item.PackageUnit.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Details[i].Item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Details[i].Item.ChinName)
+                    </td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => Model.Details[i].Note)*@
+                        @if (!printFriendly.HasValue || printFriendly.Value == false)
+                        {
+                            @Html.DropDownListFor(modelItem => Model.Details[i].Note, new SelectList(
+                                    new List<SelectListItem>()
+                                {
+                                    new SelectListItem(){
+                                        Text="Not enough stock",
+                                        Value="Not enough stock",
+                                    },
+                                    new SelectListItem(){
+                                        Text="Item no longer exists in warehouse",
+                                        Value="Item no longer exists in warehouse",
+                                    },
+                                }
+                            , "Value", "Text", Model.Details[i].Note), "", new { @class = "form-control" })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => Model.Details[i].Note, new { htmlAttributes = new { @class = "form-control" } })
+                        }
+                    </td>
+                    <td>
+                        @Html.HiddenFor(modelItem => Model.Details[i].Id)
+                    </td>
+                </tr>
+            }
+        }
+
+    </table>
+    if (!printFriendly.HasValue || printFriendly.Value == false)
+    {
+        <div class="form-group">
+            <div class="col-md-12">
+                <input type="submit" value="Accept Transfer" class="btn btn-primary hidden-print" />
+                @Html.ActionLink("Reject Transfer", "RejectTransferOrder", new { transferOrderId = Model.Id }, new { Class = "btn btn-primary hidden-print" })
+                <div id="div-reject-reason" hidden>
+                    @Html.DropDownListFor(model => model.Note, new SelectList(
+                        new List<SelectListItem>{
+                            new SelectListItem{
+                               Text="Invalid request",
+                               Value="Invalid request",
+                            }
+                        },
+                        "Value",
+                        "Text",
+                        Model.Note
+                    ), "", new { @class = "form-control" }
+               )
+                </div>
+                @Html.ActionLink("Back", "ListTransferOrder", new { transferOrderId = Model.Id }, new { Class = "btn btn-default hidden-print" })
+            </div>
+        </div>
+    }
+}
+
+
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            $("#print-button").click(function () {
+                window.print();
+            });
+        });
+    </script>
+}

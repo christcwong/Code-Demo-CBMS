@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "List Outlet Items";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm())
+{
+    <div id="the-basics">
+        <input id="test-input" class="typeahead form-control" type="text" placeholder="Scripts" data-provide="typeahead">
+    </div>
+}
+
+@section styles{
+    @Styles.Render("~/Content/jqueryui-autocomplete")
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(function () {
+            $("#test-input").each(function () {
+                $(this).autocomplete({
+                    source: "@Url.Action("GetItems","AJAX")",
+                    select: function (event, ui) {
+                        var $input = $(this);
+                        $input.val(ui.item.Serial);
+                        return false;
+                    },
+                    focus: function (event, ui) {
+                        $(this).val(ui.item.Serial);
+                        return false;
+                    },
+                }).autocomplete("instance")._renderItem = function (ul, item) {
+                    return $("<li>")
+                      .append("<a>" +item.Serial +" - "+ item.MYOBLabel + "</a>")
+                      .appendTo(ul);
+                };
+            });
+            @*$.getJSON("@Url.Action("GetItems","AJAX")", function (data, textStatus, jqrXHR) {
+                $("#test-input").autocomplete({
+                    source: data
+                });
+            });*@
+            @*$("#test-input").autocomplete({
+                source: "@Url.Action("GetItems","AJAX")",
+                select: function (event, ui) {
+                    var $input = $(this);
+                    $input.val(ui.item.Serial);
+                    return false;
+                },
+                focus: function (event, ui) {
+                    $(this).val(ui.item.Serial);
+                    return false;
+                },
+            }).autocomplete("instance")._renderItem = function (ul, item) {
+                return $("<li>")
+                  .append("<a>" +item.Serial +" - "+ item.MYOBLabel + "</a>")
+                  .appendTo(ul);
+            };*@
+            //      var availableTags = [
+            //"ActionScript",
+            //"AppleScript",
+            //"Asp",
+            //"BASIC",
+            //"C",
+            //"C++",
+            //"Clojure",
+            //"COBOL",
+            //"ColdFusion",
+            //"Erlang",
+            //"Fortran",
+            //"Groovy",
+            //"Haskell",
+            //"Java",
+            //"JavaScript",
+            //"Lisp",
+            //"Perl",
+            //"PHP",
+            //"Python",
+            //"Ruby",
+            //"Scala",
+            //"Scheme"
+            //      ];
+            //      $("#test-input").autocomplete({
+            //          source: availableTags
+            //      });
+        });
+
+    </script>
+}

@@ -1,0 +1,72 @@
+﻿@model CBMS.Models.Roster.StaffProfileLeaveRecordModel
+
+@{
+    ViewBag.Title = "Add Leave Record";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Add Leave Record</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(model => model.StaffProfileId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartOfLeave, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.StartOfLeave, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StartOfLeave, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.EndOfLeave, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.EndOfLeave, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.EndOfLeave, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.DateReturn, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.DateReturn, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DateReturn, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.DaysOfLeave, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.DaysOfLeave, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DaysOfLeave, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.LeaveType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.LeaveTypeId, (SelectList)ViewBag.LeaveTypeList, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.LeaveTypeId, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.IsUnpaid, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.IsUnpaid, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.IsUnpaid, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+
+            </div>*@
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to Staff Profile", "Details", new { Id = Model.StaffProfileId })
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

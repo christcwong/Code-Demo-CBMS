@@ -1,0 +1,55 @@
+﻿@model CBMS.Models.Roster.StaffProfilePaymentDetailModel
+@{
+    Boolean editable = true;
+    if (ViewData.Keys.Contains("Editable"))
+    {
+        editable = (bool)ViewData["Editable"];
+    }
+}
+<div>
+    <h4 class="pull-left">Payment Detail</h4>
+    @if (editable)
+    {
+        <div class="pull-right">
+            @Html.ActionLink("Edit", "EditPaymentDetail", new { paymentDetailId = Model.Id, StaffProfileId = ViewData["StaffProfileId"] })
+        </div>
+    }
+    <div class="clearfix"></div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ConfigBankModel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ConfigBankModel.BankName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AcName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AcName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BSB)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BSB)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AcNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AcNumber)
+        </dd>
+
+
+
+    </dl>
+</div>

@@ -1,0 +1,59 @@
+﻿@model IEnumerable<CBMS.Models.Config.ConfigShiftTypeModel>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartHour)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EndHour)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BreakTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalHour)
+        </th>
+        <th></th>
+    </tr>
+
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartHour)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndHour)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BreakTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalHour)
+                </td>
+                <td>
+                    @Ajax.ActionLink("Edit", "EditConfigShiftType", new { configShiftTypeId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "ShowEditConfigShiftTypeModal", HttpMethod = "GET", UpdateTargetId = "divEditConfigShiftType" }, new { @class = "btn btn-default" })
+                    @Ajax.ActionLink("Delete", "DeleteConfigShiftType", new { configShiftTypeId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "OnComplete", HttpMethod = "POST", Confirm = "Are you sure you want to deactivate this item?", UpdateTargetId = "ShiftTypeList" }, new { @class = "btn btn-default" })
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>No Data return.</td>
+            <td></td>
+            <td></td>
+        </tr>
+    }
+</table>
+

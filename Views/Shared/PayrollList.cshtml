@@ -1,0 +1,128 @@
+﻿@model CBMS.Models.ViewModels.PayrollListViewModel
+
+@{
+    var hasDept = !(Model.Department == null);
+}
+<h4>@(Model.Outlet.Brand.Name) - @(Model.Outlet.Name) @(Model.Department != null ? " - " + Model.Department.Name : "")</h4>
+@if (Model.PayrollProfiles.Any())
+{
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseone">
+                        <span class="glyphicon glyphicon-collapse-down"></span> Payroll Profiles (@(Model.PayrollProfiles.Count) Profile@(Model.PayrollProfiles.Count > 1 ? "s" : ""))
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    @{
+                        if (hasDept) {
+                            Html.RenderPartial("_PayrollProfileList", Model.PayrollProfiles, new ViewDataDictionary() { { "outletId", Model.Outlet.Id },{"deptId",Model.Department.Id} });
+                        } else {
+                            Html.RenderPartial("_PayrollProfileList", Model.PayrollProfiles, new ViewDataDictionary() { { "outletId", Model.Outlet.Id } });
+                        }                 
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+
+                    <a class="collpase" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                        <span class="glyphicon glyphicon-collapse-down"></span> Payroll Records
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
+                <div class="panel-body">
+                    @*@{
+                        if (hasDept)
+                        {
+                            Html.RenderPartial("_PayrollRecordList", Model.PayrollRecords, new ViewDataDictionary() { { "outletId", Model.Outlet.Id }, { "deptId", Model.Department.Id } });
+                        }
+                        else
+                        {
+                            Html.RenderPartial("_PayrollRecordList", Model.PayrollRecords, new ViewDataDictionary() { { "outletId", Model.Outlet.Id } });
+                        }
+                    }*@
+                    @{
+                        if (hasDept)
+                        {
+                            Html.RenderPartial("_PayrollRecordListWithExpiringIndicator", Model.PayrollProfileExpiringDictionary, new ViewDataDictionary() { { "outletId", Model.Outlet.Id }, { "deptId", Model.Department.Id } });
+                        }
+                        else
+                        {
+                            Html.RenderPartial("_PayrollRecordListWithExpiringIndicator", Model.PayrollProfileExpiringDictionary, new ViewDataDictionary() { { "outletId", Model.Outlet.Id } });
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+
+                    <a class="collpase" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                        <span class="glyphicon glyphicon-collapse-down"></span> Payroll Profiles (Setup before Key in Payroll Records)
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
+                <div class="panel-body">
+                    @{
+                        if (hasDept)
+                        {
+                            Html.RenderPartial("_PayrollProfileList", Model.PayrollProfiles, new ViewDataDictionary() { { "outletId", Model.Outlet.Id }, { "deptId", Model.Department.Id } });
+                        }
+                        else
+                        {
+                            Html.RenderPartial("_PayrollProfileList", Model.PayrollProfiles, new ViewDataDictionary() { { "outletId", Model.Outlet.Id } });
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseone">
+                        <span class="glyphicon glyphicon-collapse-down"></span> Payroll Records
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    @*@{
+                        if (hasDept)
+                        {
+                            Html.RenderPartial("_PayrollRecordList", Model.PayrollRecords, new ViewDataDictionary() { { "outletId", Model.Outlet.Id }, { "deptId", Model.Department.Id } });
+                        }
+                        else
+                        {
+                            Html.RenderPartial("_PayrollRecordList", Model.PayrollRecords, new ViewDataDictionary() { { "outletId", Model.Outlet.Id } });
+                        }
+                    }*@
+                    @{
+                        if (hasDept)
+                        {
+                            Html.RenderPartial("_PayrollRecordListWithExpiringIndicator", Model.PayrollProfileExpiringDictionary, new ViewDataDictionary() { { "outletId", Model.Outlet.Id }, { "deptId", Model.Department.Id } });
+                        }
+                        else
+                        {
+                            Html.RenderPartial("_PayrollRecordListWithExpiringIndicator", Model.PayrollProfileExpiringDictionary, new ViewDataDictionary() { { "outletId", Model.Outlet.Id } });
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

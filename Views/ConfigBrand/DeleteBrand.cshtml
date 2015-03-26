@@ -1,0 +1,34 @@
+﻿@model CBMS.Models.Roster.BrandModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    Delete
+    <span class="pull-right">
+        <small><a onclick="history.go(-1);return false;" href="#">Back</a></small>
+    </span>
+</h2>
+
+<h3>Are you sure you want to deactivate this?</h3>
+
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Id);
+    <div class="form-inline">
+        <label>Brand Name: </label>
+        <div class="form-group">
+            <div>
+                @Html.DisplayFor(model => model.Name)
+            </div>
+        </div>
+        <br/>
+        <input type="submit" value="Delete" class="btn btn-default" />
+    </div>
+}

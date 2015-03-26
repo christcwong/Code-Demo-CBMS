@@ -1,0 +1,78 @@
+﻿@model IEnumerable<CBMS.Models.Payroll.PayrollRecordModel>
+
+<p>
+    @if (ViewData.ContainsKey("deptId"))
+    {
+        @Html.ActionLink("Create New", "Create", "PayrollRecord", new { deptId = (int)ViewData["deptId"] }, null)
+    }
+    else
+    {
+        if (ViewData.ContainsKey("outletId"))
+        {
+            @Html.ActionLink("Create New", "Create", "PayrollRecord", new { outletId = (int)ViewData["outletId"] }, null)
+        }
+        else
+        {
+            @Html.ActionLink("Create New", "Create", "PayrollRecord")
+        }
+    }
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Outlet.Brand)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Outlet)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AmountCalculated)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AmountPaid)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Note)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Outlet.Brand.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Outlet.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AmountCalculated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AmountPaid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Note)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", "PayrollRecord", new { id = item.Id }, null) |
+                @Html.ActionLink("Details", "Details", "PayrollRecord", new { id = item.Id }, null) |
+                @Html.ActionLink("Delete", "Delete", "PayrollRecord", new { id = item.Id }, null)
+            </td>
+        </tr>
+    }
+
+</table>

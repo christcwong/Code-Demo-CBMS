@@ -1,0 +1,16 @@
+﻿@model IEnumerable<CBMS.Models.Roster.StaffProfileModel>
+
+@{
+    ViewBag.Title = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>List</h2>
+
+<div id="search-results">
+    @{Html.RenderPartial("StaffProfileList", Model);}
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryajax")
+}

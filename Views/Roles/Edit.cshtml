@@ -1,0 +1,62 @@
+﻿@model CBMS.Models.ViewModels.ApplicationRoleEditViewModel
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit Role</h2>
+
+@Html.ActionLink("List Roles", "Index") | @Html.ActionLink("Manage User Role", "ManageUserRoles")
+<hr />
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Role.Id)
+    <div>
+        Role name
+    </div>
+    <p>
+        @Html.EditorFor(model => model.Role.Name, new { htmlAttributes = new { @class = "form-control" } })
+    </p>
+    <div>
+        Description
+    </div>
+    <p>
+        @Html.EditorFor(model => model.Role.Description, new { htmlAttributes = new { @class = "form-control" } })
+    </p>
+    <h4>
+        Accessible Actions
+    </h4>
+    @*<dl>
+            @foreach (var accessibilityOption in Model.AvailableAccessiblities)
+            {
+                <dd>
+                    @Html.LabelFor(modelItem => accessibilityOption.ControllerName + " " + accessibilityOption.MethodName)
+                </dd>
+                <dt>
+                    @Html.CheckBoxFor(modelItem=>accessibilityOption.)
+                </dt>
+
+            }
+        </dl>*@
+    <div class="form-group">
+        @{
+            var htmlListInfo = new MvcCheckBoxList.Model.HtmlListInfo(
+                MvcCheckBoxList.Model.HtmlTag.table,
+                3,
+                new { @class = "table table-bordered" },
+                MvcCheckBoxList.Model.TextLayout.Default,
+                MvcCheckBoxList.Model.TemplateIsUsed.No
+            );
+            @Html.CheckBoxListFor(
+                model => model.PostedAccessiblities.AccessibilityIds,
+                model => model.AvailableAccessiblities,
+                accessibility => accessibility.Id,
+             accessibility => accessibility.ControllerName + "&nbsp;:&nbsp;" + accessibility.MethodName,
+                accessiblity => (Model.Role.Accessiblities ?? new List<CBMS.Models.Accessiblity>()).Contains(accessiblity),
+                htmlListInfo
+            )
+        }
+    </div>
+    <input type="submit" value="Save" />
+}

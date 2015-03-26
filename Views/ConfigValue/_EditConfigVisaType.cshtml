@@ -1,0 +1,38 @@
+﻿@model CBMS.Models.Config.ConfigVisaTypeModel
+
+@if (Model != null)
+{
+    using (Ajax.BeginForm("EditConfigVisaType", new AjaxOptions { OnBegin = "OnBegin", OnComplete = "HideEditConfigVisaTypeModal", HttpMethod = "POST", UpdateTargetId = "VisaTypeList" }))
+    {
+        
+        <div class="modal fade" id="EditConfigVisaTypeModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Edit VisaType</h4>
+                    </div>
+                    <div class="modal-body">
+                        @Html.HiddenFor(model => model.Id)
+                        <div class="form-group">
+                            <label>Visa Type Name: </label>
+                            @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Visa Type Name" } })
+                        </div>
+                        <div class="form-group">
+                            <label>Visa Validate Year (optional): </label>
+                            @Html.EditorFor(m => m.ValidatoinPeriodYears, new { htmlAttributes = new { @class = "form-control", @placeholder = "Visa Validate Year (optional)" } })
+                        </div>
+                        <div class="form-group">
+                            <label>Visa Validate Month (optional): </label>
+                            @Html.EditorFor(m => m.ValidatoinPeriodMonths, new { htmlAttributes = new { @class = "form-control", @placeholder = "Visa Validate Month (optional)" } })
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" value="Submit" class="btn btn-primary" />
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    }
+}

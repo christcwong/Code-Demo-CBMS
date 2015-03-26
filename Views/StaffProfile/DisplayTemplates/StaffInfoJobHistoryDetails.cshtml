@@ -1,0 +1,114 @@
+﻿@model IEnumerable<CBMS.Models.Roster.StaffInfoJobHistoryModel>
+@{
+    int? staffProfileId = (int)ViewData["StaffProfileId"];
+    Boolean editable = true;
+    if (ViewData.Keys.Contains("Editable"))
+    {
+        editable = (bool)ViewData["Editable"];
+    }
+}
+<div class="table-responsive">
+    <div class="pull-left">
+        <h4>Job Histories</h4>
+    </div>
+    @if (editable)
+    {
+        <div class="pull-right">
+
+            @Html.ActionLink("Add...", "AddJobHistory", new { StaffInfoId = ViewData["StaffInfoId"], StaffProfileID = ViewData["StaffProfileId"] })
+        </div>
+    }
+    <div class="clearfix"></div>
+    <table class="table table-striped">
+        <tbody>
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelitem => item.Position)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelitem => item.CompanyName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelitem => item.ReasonOfLeaving)
+                        </td>
+                        <td>
+                            @if (editable)
+                            {
+                                @Html.ActionLink("Delete", "RemoveJobHistory", new { StaffInfoId = ViewData["StaffInfoId"], JobHistoryId = item.Id })
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="30624700">
+                        @Html.Label("Model.Any()", "There is no job history for this staff")
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Position)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CompanyName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReasonOfLeaving)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tfoot></tfoot>
+    </table>
+</div>
+@*<div>
+        <h4>StaffInfoJobHistoryModel</h4>
+            <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.StaffInfo.FirstName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.StaffInfo.FirstName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Position)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Position)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CompanyName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CompanyName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ReasonOfLeaving)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ReasonOfLeaving)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+            @Html.ActionLink("Back to List", "Index")
+        </p>*@

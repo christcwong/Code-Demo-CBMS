@@ -1,0 +1,66 @@
+﻿@model IEnumerable<CBMS.Models.Inventory.ItemModel>
+
+
+<p>
+    @Html.ActionLink("Create New", "Create","Inventory") | @Html.ActionLink("Import", "Upload","Inventory")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Serial)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ChinName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Category)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PackageUnit)
+        </th>
+        <th></th>
+    </tr>
+
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Serial)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChinName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PackageUnit.Name)
+                </td>
+                <td>
+                    @Ajax.ActionLink("Edit", "EditItem", new { itemId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "ShowEditItemModal", HttpMethod = "GET", UpdateTargetId = "divEditItem" }, new { @class = "btn btn-default" })
+                    @Ajax.ActionLink("Delete", "DeleteItem", new { itemId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "OnComplete", HttpMethod = "POST", Confirm = "Are you sure you want to deactivate this item?", UpdateTargetId = "ItemList" }, new { @class = "btn btn-default" })
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>No Data return.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    }
+</table>
+

@@ -1,0 +1,25 @@
+﻿@model CBMS.Models.Roster.StaffProfileModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<div class="pull-left">
+    <h3>Are you sure you want to deactivate this?</h3>
+</div>
+<div class="pull-right">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index", new { deptId = Model.DepartmentId })
+        </div>
+    }
+</div>
+<div class="clearfix"></div>
+@{Html.RenderPartial("DisplayTemplates/StaffProfileDetails", Model, new ViewDataDictionary { { "Editable", false } });}

@@ -1,0 +1,33 @@
+﻿@model IEnumerable<CBMS.Models.Config.ConfigBankModel>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.BankName)
+        </th>
+        <th></th>
+    </tr>
+
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BankName)
+                </td>
+                <td>
+                    @Ajax.ActionLink("Edit", "EditConfigBank", new { configBankId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "ShowEditConfigBankModal", HttpMethod = "GET", UpdateTargetId = "divEditConfigBank" }, new { @class = "btn btn-default" })
+                    @Ajax.ActionLink("Delete", "DeleteConfigBank", new { configBankId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "OnComplete", HttpMethod = "POST", Confirm = "Are you sure you want to deactivate this item?", UpdateTargetId = "bankList" }, new { @class = "btn btn-default" })
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>No Data return.</td>
+        </tr>
+    }
+</table>
+

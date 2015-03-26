@@ -1,0 +1,34 @@
+﻿@model IEnumerable<CBMS.Models.Inventory.ItemCategoryModel>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th></th>
+    </tr>
+
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Ajax.ActionLink("Edit", "EditItemCategory", new { itemCategoryId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "ShowEditItemCategoryModal", HttpMethod = "GET", UpdateTargetId = "divEditItemCategory" }, new { @class = "btn btn-default" })
+                    @Ajax.ActionLink("Delete", "DeleteItemCategory", new { itemCategoryId = item.Id }, new AjaxOptions { OnBegin = "OnBegin", OnComplete = "OnComplete", HttpMethod = "POST", Confirm = "Are you sure you want to deactivate this item?", UpdateTargetId = "VisaTypeList" }, new { @class = "btn btn-default" })
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>No Data return.</td>
+            <td></td>
+        </tr>
+    }
+</table>
+

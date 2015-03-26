@@ -1,0 +1,42 @@
+﻿@model CBMS.Models.Roster.OutletModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    Delete
+    <span class="pull-right">
+        <small>@Html.ActionLink("Back", "ListOutlet", new { brandId = Model.BrandId })</small>
+    </span>
+</h2>
+
+<h3>Are you sure you want to deactivate this?</h3>
+
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Id);
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2">Outlet Name: </label>
+
+            <div class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2">Address: </label>
+
+            <div class="col-sm-10">
+                @Html.DisplayFor(model => model.Location.Address)
+            </div>
+        </div>
+        <br />
+        <input type="submit" value="Delete" class="btn btn-default" />
+    </div>
+}

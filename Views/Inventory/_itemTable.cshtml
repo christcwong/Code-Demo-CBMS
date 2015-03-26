@@ -1,0 +1,85 @@
+﻿@model IEnumerable<CBMS.Models.Inventory.ItemModel>
+
+@using CBMS.Utilities;
+@{
+    int NumbmerOfTables = 2;
+    var SplitedGroups = Model.Select((item, index) => new { index = index, value = item })
+        .GroupBy(
+            x => x.index % NumbmerOfTables,
+            x => x.value
+        );
+    var SplitedData = SplitedGroups.Select(grp => grp.ToList());
+
+    int? outletItemCategoryId = (int?)ViewData["outletItemCategoryId"];
+}
+
+@*<p>
+        @Html.ActionLink("Create New", "Create")
+    </p>*@
+<table width="100%">
+    <tr>
+        @foreach (var dataGroup in SplitedData)
+        {
+            <td style="vertical-align: top;">
+                <table class="table table-bordered" width="100%">
+                    <tr>
+                        <th>
+
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PackageUnit)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Serial)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Name)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ChinName)
+                        </th>
+                    </tr>
+
+                    @foreach (var item in dataGroup)
+                    {
+                        <tr>
+                            <td>
+                                @if (outletItemCategoryId.HasValue)
+                                {
+                                    @Ajax.RawActionLink(
+                                        "<span class=\"glyphicon glyphicon-remove\"></span>",
+                                             "DeleteItemFromOutletItemCategory",
+                                             "Inventory",
+                                                  new { itemId = item.Id, outletItemCategoryId = outletItemCategoryId.Value },
+                                                  new AjaxOptions()
+                                                  {
+                                                      InsertionMode = InsertionMode.Replace,
+                                                      HttpMethod = "POST",
+                                                      LoadingElementDuration = 1000,
+                                                      LoadingElementId = "loading-element-" + (outletItemCategoryId.Value),
+                                                      UpdateTargetId = "itemList-" + (outletItemCategoryId.Value),
+                                                      Confirm = "Are you sure you are deleting this item from category ?",
+                                                  },
+                                                  null
+                                    )
+                                }
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PackageUnit.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Serial)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ChinName)
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        }
+    </tr>
+</table>
